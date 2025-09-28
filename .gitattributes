@@ -1,0 +1,7 @@
+git lfs track "models/*.h5"
+git lfs track "models/*.hdf5"
+git lfs track "models/*.pt"
+git lfs track "models/*.pth"
+git lfs track "models/*.joblib"
+git lfs track "models/*.pkl"
+git lfs track "data/processed/*.csv"
