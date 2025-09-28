@@ -297,16 +297,16 @@ def detect_disease_from_image(img_path, crop):
     model, class_labels = load_model_and_labels(crop)
     _, _, preprocess_mode, internal_preprocessing = CROP_MODELS[crop]
 
-    # Preprocess input
+    # ✅ Use preprocess_mode here, not crop
     img_array = preprocess_image(img_path, preprocess_mode, internal_preprocessing)
 
-    # Predict
     preds = model.predict(img_array, verbose=0)
     class_index = np.argmax(preds[0])
     predicted_class = class_labels[class_index]
     confidence = round(float(np.max(preds[0]) * 100), 2)
 
     return f"✅ Predicted Class: {predicted_class}", f"✅ Confidence: {confidence:.2f}%"
+
 
 
 
