@@ -1,7 +1,7 @@
-git lfs track "models/*.h5"
-git lfs track "models/*.hdf5"
-git lfs track "models/*.pt"
-git lfs track "models/*.pth"
-git lfs track "models/*.joblib"
-git lfs track "models/*.pkl"
-git lfs track "data/processed/*.csv"
+models/*.h5 filter=lfs diff=lfs merge=lfs -text
+models/*.hdf5 filter=lfs diff=lfs merge=lfs -text
+models/*.pt filter=lfs diff=lfs merge=lfs -text
+models/*.pth filter=lfs diff=lfs merge=lfs -text
+models/*.joblib filter=lfs diff=lfs merge=lfs -text
+models/*.pkl filter=lfs diff=lfs merge=lfs -text
+data/processed/*.csv filter=lfs diff=lfs merge=lfs -text
