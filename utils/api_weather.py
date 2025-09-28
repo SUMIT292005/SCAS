@@ -3,7 +3,7 @@ import difflib
 
 
 # Replace with your actual API key
-
+API_KEY = os.getenv("API_KEY1")
 
 
 DISTRICT_CITY_MAP = {

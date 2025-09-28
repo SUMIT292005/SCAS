@@ -2,6 +2,7 @@
 import requests
 
 # ================= Configuration =================
+API_KEY = os.getenv("API_KEY")
 RESOURCE_ID = "9ef84268-d588-465a-a308-a864a43d0070"
 API_URL = f"https://api.data.gov.in/resource/{RESOURCE_ID}?format=json&api-key={API_KEY}"
 
