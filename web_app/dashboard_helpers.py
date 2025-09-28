@@ -270,14 +270,15 @@ def load_model_and_labels(crop):
 # ===========================================
 def preprocess_image(img_path, mode, internal_preprocessing):
     """Apply preprocessing depending on training mode & whether model includes it."""
-    img = image.load_img(img_path, target_size=(224, 224),color_mode="rgb")
+    if mode == "maize":
+        img = image.load_img(img_path, target_size=(224,224), color_mode="grayscale")
+    else:
+        img = image.load_img(img_path, target_size=(224,224), color_mode="rgb")
+    
     img_array = image.img_to_array(img)
-
-    # Add batch dimension
     img_array = np.expand_dims(img_array, axis=0)
 
     if internal_preprocessing:
-        # ✅ No extra preprocessing needed (e.g., maize inference model)
         return img_array
     else:
         if mode == "rescale":
@@ -285,7 +286,8 @@ def preprocess_image(img_path, mode, internal_preprocessing):
         elif mode == "efficientnet":
             return eff_preprocess(img_array)
         else:
-            raise ValueError(f"❌ Unknown preprocessing mode: {mode}")
+            return img_array
+
 
 # ===========================================
 # Run prediction
