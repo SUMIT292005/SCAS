@@ -13,7 +13,8 @@ from pathlib import Path
 Data = Path("data/processed/Price_Maharashtra1.csv")
  
 # Convert to absolute path (works across systems)
-Data = Data.resolve()df = pd.read_csv(Data)
+Data = Data.resolve()
+df = pd.read_csv(Data)
 
 # ==========================================================
 # Main Page
