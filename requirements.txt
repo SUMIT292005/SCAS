@@ -4,7 +4,7 @@ numpy
 pandas
 scikit-learn
 joblib
-tensorflow==2.20.0
+tensorflow==2.19.0
 keras
 matplotlib
 seaborn
