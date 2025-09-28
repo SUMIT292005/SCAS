@@ -1,5 +1,6 @@
 # mandi_api.py
 import requests
+import os
 
 # ================= Configuration =================
 API_KEY = os.getenv("API_KEY")
