@@ -270,15 +270,14 @@ def load_model_and_labels(crop):
 # ===========================================
 def preprocess_image(img_path, mode, internal_preprocessing):
     """Apply preprocessing depending on training mode & whether model includes it."""
-    if mode == "maize":
-        img = image.load_img(img_path, target_size=(224,224), color_mode="grayscale")
-    else:
-        img = image.load_img(img_path, target_size=(224,224), color_mode="rgb")
-    
+    img = image.load_img(img_path, target_size=(224, 224),color_mode="rgb")
     img_array = image.img_to_array(img)
+
+    # Add batch dimension
     img_array = np.expand_dims(img_array, axis=0)
 
     if internal_preprocessing:
+        # ✅ No extra preprocessing needed (e.g., maize inference model)
         return img_array
     else:
         if mode == "rescale":
@@ -286,8 +285,7 @@ def preprocess_image(img_path, mode, internal_preprocessing):
         elif mode == "efficientnet":
             return eff_preprocess(img_array)
         else:
-            return img_array
-
+            raise ValueError(f"❌ Unknown preprocessing mode: {mode}")
 
 # ===========================================
 # Run prediction
@@ -297,16 +295,16 @@ def detect_disease_from_image(img_path, crop):
     model, class_labels = load_model_and_labels(crop)
     _, _, preprocess_mode, internal_preprocessing = CROP_MODELS[crop]
 
-    # ✅ Use preprocess_mode here, not crop
+    # Preprocess input
     img_array = preprocess_image(img_path, preprocess_mode, internal_preprocessing)
 
+    # Predict
     preds = model.predict(img_array, verbose=0)
     class_index = np.argmax(preds[0])
     predicted_class = class_labels[class_index]
     confidence = round(float(np.max(preds[0]) * 100), 2)
 
     return f"✅ Predicted Class: {predicted_class}", f"✅ Confidence: {confidence:.2f}%"
-
 
 
 
