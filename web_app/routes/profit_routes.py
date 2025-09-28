@@ -7,8 +7,13 @@ profit_pest_routes = Blueprint("profit_pest_routes", __name__)
 # ==========================================================
 # Load CSV (for Manual profit estimation)
 # ==========================================================
-Data = "C:\\Users\\asus\\Desktop\\Projects\\Crop-Advisory-System\\data\\processed\\Price_Maharashtra1.csv"
-df = pd.read_csv(Data)
+from pathlib import Path
+ 
+# Build a relative path instead of hardcoding full path
+Data = Path("data/processed/Price_Maharashtra1.csv")
+ 
+# Convert to absolute path (works across systems)
+Data = Data.resolve()df = pd.read_csv(Data)
 
 # ==========================================================
 # Main Page
