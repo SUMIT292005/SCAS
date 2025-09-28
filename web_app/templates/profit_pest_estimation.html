@@ -1,0 +1,1202 @@
+{% extends "base.html" %}
+
+{% block head %}
+<script>
+// Initialize when DOM is loaded
+document.addEventListener("DOMContentLoaded", function() {
+    // Set up mode toggle buttons
+    setupModeToggle();
+    
+    // Initialize auto options
+    fetchAutoOptions("state", {}, "auto_state");
+    
+    // Set up all event listeners
+    setupEventListeners();
+    
+    // Add entrance animations
+    document.querySelector('.profit-header').classList.add('slide-in-left');
+    document.querySelector('.pest-header').classList.add('slide-in-left');
+    document.querySelector('.profit-card').classList.add('slide-in-up');
+    document.querySelector('.pest-card').classList.add('slide-in-up');
+    
+    // Initialize with manual mode
+    document.getElementById("manualBtn").click();
+});
+
+function setupModeToggle() {
+    document.getElementById("autoBtn").addEventListener("click", () => {
+        document.getElementById("automaticSection").style.display = "block";
+        document.getElementById("manualSection").style.display = "none";
+        
+        // Update button states
+        document.getElementById("autoBtn").classList.add("active-mode");
+        document.getElementById("manualBtn").classList.remove("active-mode");
+        
+        // Add animation
+        document.getElementById("automaticSection").classList.add("fade-in-slide");
+    });
+    
+    document.getElementById("manualBtn").addEventListener("click", () => {
+        document.getElementById("manualSection").style.display = "block";
+        document.getElementById("automaticSection").style.display = "none";
+        
+        // Update button states
+        document.getElementById("manualBtn").classList.add("active-mode");
+        document.getElementById("autoBtn").classList.remove("active-mode");
+        
+        // Add animation
+        document.getElementById("manualSection").classList.add("fade-in-slide");
+    });
+}
+
+function setupEventListeners() {
+    // AUTO SECTION EVENT LISTENERS
+    document.getElementById("auto_state").addEventListener("change", function(e) {
+        if (e.target.value) {
+            fetchAutoOptions("district", {state: e.target.value}, "auto_district");
+            // Reset dependent dropdowns
+            resetDropdowns(['auto_market', 'auto_commodity']);
+        }
+    });
+
+    document.getElementById("auto_district").addEventListener("change", function(e) {
+        if (e.target.value) {
+            fetchAutoOptions("market", { 
+                state: document.getElementById("auto_state").value, 
+                district: e.target.value 
+            }, "auto_market");
+            resetDropdowns(['auto_commodity']);
+        }
+    });
+
+    document.getElementById("auto_market").addEventListener("change", function(e) {
+        if (e.target.value) {
+            fetchAutoOptions("commodity", { 
+                state: document.getElementById("auto_state").value, 
+                district: document.getElementById("auto_district").value, 
+                market: e.target.value 
+            }, "auto_commodity");
+        }
+    });
+
+    document.getElementById("auto_commodity").addEventListener("change", function(e) {
+        const fetchBtn = document.getElementById("fetchAutoPrice");
+        fetchBtn.disabled = !e.target.value;
+        if (e.target.value) {
+            fetchBtn.classList.add('ready');
+        } else {
+            fetchBtn.classList.remove('ready');
+        }
+    });
+
+    document.getElementById("fetchAutoPrice").addEventListener("click", fetchAutoPrice);
+
+    // Auto yield and price basis listeners
+    document.getElementById("auto_yield").addEventListener("input", function() {
+        const priceData = {
+            min_price: parseFloat(document.getElementById("res_min").innerText) || 0,
+            max_price: parseFloat(document.getElementById("res_max").innerText) || 0,
+            modal_price: parseFloat(document.getElementById("res_modal").innerText) || 0
+        };
+        updateAutoEarnings(priceData);
+    });
+
+    document.getElementById("auto_price_basis").addEventListener("change", function() {
+        const priceData = {
+            min_price: parseFloat(document.getElementById("res_min").innerText) || 0,
+            max_price: parseFloat(document.getElementById("res_max").innerText) || 0,
+            modal_price: parseFloat(document.getElementById("res_modal").innerText) || 0
+        };
+        updateAutoEarnings(priceData);
+    });
+
+    // MANUAL SECTION EVENT LISTENERS
+    document.getElementById("district").addEventListener("change", function(e) {
+        if (e.target.value) {
+            fetchOptions("District Name", {"District Name": e.target.value}, "market");
+            resetManualDropdowns(['market', 'commodity', 'variety', 'grade']);
+        }
+    });
+
+    document.getElementById("market").addEventListener("change", function(e) {
+        if (e.target.value) {
+            fetchOptions("Market Name", {
+                "District Name": document.getElementById("district").value,
+                "Market Name": e.target.value
+            }, "commodity");
+            resetManualDropdowns(['commodity', 'variety', 'grade']);
+        }
+    });
+
+    document.getElementById("commodity").addEventListener("change", function(e) {
+        if (e.target.value) {
+            fetchOptions("Commodity", {
+                "District Name": document.getElementById("district").value,
+                "Market Name": document.getElementById("market").value,
+                "Commodity": e.target.value
+            }, "variety");
+            resetManualDropdowns(['variety', 'grade']);
+        }
+    });
+
+    document.getElementById("variety").addEventListener("change", function(e) {
+        if (e.target.value) {
+            fetchOptions("Variety", {
+                "District Name": document.getElementById("district").value,
+                "Market Name": document.getElementById("market").value,
+                "Commodity": document.getElementById("commodity").value,
+                "Variety": e.target.value
+            }, "grade");
+            resetManualDropdowns(['grade']);
+        }
+    });
+
+    document.getElementById("grade").addEventListener("change", function(e) {
+        const btn = document.getElementById("seePrices");
+        btn.disabled = !e.target.value;
+        if (e.target.value) {
+            btn.classList.add('ready');
+        } else {
+            btn.classList.remove('ready');
+        }
+    });
+
+    document.getElementById("seePrices").addEventListener("click", fetchPrices);
+    document.getElementById("yield").addEventListener("input", calculateEarnings);
+    document.getElementById("price_basis").addEventListener("change", calculateEarnings);
+    
+    // Pest form submit handler
+    document.getElementById("pestForm").addEventListener("submit", handlePestFormSubmit);
+}
+
+// ----------------- AUTO SECTION FUNCTIONS -----------------
+function fetchAutoOptions(level, filters, targetId) {
+    const target = document.getElementById(targetId);
+    const originalHTML = target.innerHTML;
+    target.innerHTML = '<option value="">🔄 Loading...</option>';
+    target.disabled = true;
+    
+    fetch("{{ url_for('profit_pest_routes.auto_get_options') }}", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ level: level, filters: filters })
+    })
+    .then(res => res.json())
+    .then(data => {
+        target.innerHTML = "<option value=''>-- Select --</option>";
+        if (data.options) {
+            data.options.forEach(opt => {
+                target.innerHTML += `<option value="${opt}">${opt}</option>`;
+            });
+            target.disabled = false;
+            target.classList.add('data-loaded');
+            setTimeout(() => target.classList.remove('data-loaded'), 1000);
+        }
+    })
+    .catch(() => {
+        target.innerHTML = originalHTML;
+        target.disabled = false;
+        showNotification("Error loading data", "error");
+    });
+}
+
+function fetchAutoPrice() {
+    const fetchBtn = document.getElementById("fetchAutoPrice");
+    const originalText = fetchBtn.innerHTML;
+    
+    fetchBtn.disabled = true;
+    fetchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Fetching Price...';
+    
+    const payload = {
+        state: document.getElementById("auto_state").value,
+        district: document.getElementById("auto_district").value,
+        market: document.getElementById("auto_market").value,
+        commodity: document.getElementById("auto_commodity").value
+    };
+
+    fetch("{{ url_for('profit_pest_routes.auto_get_price') }}", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data && data.state) {
+            // Animate results appearance
+            const resultDiv = document.getElementById("autoPriceResult");
+            resultDiv.style.display = "block";
+            resultDiv.classList.add('fade-in');
+            
+            // Update result values
+            document.getElementById("res_state").innerText = data.state;
+            document.getElementById("res_district").innerText = data.district;
+            document.getElementById("res_market").innerText = data.market;
+            document.getElementById("res_commodity").innerText = data.commodity;
+            document.getElementById("res_date").innerText = data.arrival_date;
+            document.getElementById("res_min").innerText = data.min_price;
+            document.getElementById("res_max").innerText = data.max_price;
+            document.getElementById("res_modal").innerText = data.modal_price;
+
+            // Show Yield & Earnings section
+            const yieldSection = document.getElementById("autoYieldSection");
+            yieldSection.style.display = "flex";
+            yieldSection.classList.add('fade-in-slide');
+
+            // Initial earnings calculation
+            updateAutoEarnings(data);
+            
+            showNotification("Price data fetched successfully!", "success");
+        }
+        
+        fetchBtn.disabled = false;
+        fetchBtn.innerHTML = originalText;
+    })
+    .catch(() => {
+        fetchBtn.disabled = false;
+        fetchBtn.innerHTML = originalText;
+        showNotification("Error fetching price data", "error");
+    });
+}
+
+function updateAutoEarnings(priceData) {
+    let yieldVal = parseFloat(document.getElementById("auto_yield").value) || 0;
+    let basis = document.getElementById("auto_price_basis").value;
+    let minP = parseFloat(priceData.min_price) || 0;
+    let maxP = parseFloat(priceData.max_price) || 0;
+    let modalP = parseFloat(priceData.modal_price) || 0;
+    let price = (basis === "avg") ? (minP + maxP)/2 : modalP;
+    
+    const earningsInput = document.getElementById("auto_earnings");
+    const newValue = (yieldVal * price).toFixed(2);
+    earningsInput.value = newValue;
+}
+
+// ----------------- MANUAL SECTION FUNCTIONS -----------------
+function fetchOptions(level, filters, targetId) {
+    const target = document.getElementById(targetId);
+    const originalHTML = target.innerHTML;
+    target.innerHTML = '<option value="">🔄 Loading...</option>';
+    target.disabled = true;
+    
+    fetch("{{ url_for('profit_pest_routes.get_options_manual') }}", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ level: level, filters: filters })
+    })
+    .then(res => res.json())
+    .then(data => {
+        target.innerHTML = "<option value=''>-- Select --</option>";
+        if (data.options) {
+            data.options.forEach(opt => {
+                target.innerHTML += `<option value="${opt}">${opt}</option>`;
+            });
+            target.disabled = false;
+            target.classList.add('data-loaded');
+            setTimeout(() => target.classList.remove('data-loaded'), 1000);
+        }
+    })
+    .catch(() => {
+        target.innerHTML = originalHTML;
+        target.disabled = false;
+        showNotification("Error loading data", "error");
+    });
+}
+
+function fetchPrices(e) {
+    e.preventDefault();
+    
+    const btn = document.getElementById("seePrices");
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Getting Prices...';
+    
+    const filters = {
+        "District Name": document.getElementById("district").value,
+        "Market Name": document.getElementById("market").value,
+        "Commodity": document.getElementById("commodity").value,
+        "Variety": document.getElementById("variety").value,
+        "Grade": document.getElementById("grade").value
+    };
+
+    fetch("{{ url_for('profit_pest_routes.get_options_manual') }}", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ level: "Grade", filters: filters })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.min_price) {
+            // Update price fields
+            document.getElementById("min_price").value = data.min_price;
+            document.getElementById("max_price").value = data.max_price;
+            document.getElementById("modal_price").value = data.modal_price;
+            
+            // Show sections
+            const priceSection = document.getElementById("priceSection");
+            priceSection.style.display = "block";
+            priceSection.classList.add('fade-in-slide');
+            
+            const yieldSection = document.getElementById("yieldSection");
+            yieldSection.style.display = "flex";
+            yieldSection.classList.add('fade-in-slide');
+            
+            calculateEarnings();
+            showNotification("Price data retrieved successfully!", "success");
+        }
+        
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    })
+    .catch(() => {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        showNotification("Error fetching prices", "error");
+    });
+}
+
+function calculateEarnings() {
+    let yieldVal = parseFloat(document.getElementById("yield").value) || 0;
+    let basis = document.getElementById("price_basis").value;
+    let minP = parseFloat(document.getElementById("min_price").value) || 0;
+    let maxP = parseFloat(document.getElementById("max_price").value) || 0;
+    let modalP = parseFloat(document.getElementById("modal_price").value) || 0;
+    let price = (basis === "avg") ? (minP + maxP) / 2 : modalP;
+    
+    document.getElementById("earnings").value = (yieldVal * price).toFixed(2);
+}
+
+// ----------------- UTILITY FUNCTIONS -----------------
+function resetDropdowns(dropdownIds) {
+    dropdownIds.forEach(id => {
+        const dropdown = document.getElementById(id);
+        dropdown.innerHTML = '<option value="">-- Select --</option>';
+        dropdown.disabled = true;
+        dropdown.classList.remove('ready');
+    });
+}
+
+function resetManualDropdowns(dropdownIds) {
+    dropdownIds.forEach(id => {
+        const dropdown = document.getElementById(id);
+        if (dropdown) {
+            dropdown.innerHTML = '<option value="">-- Select --</option>';
+            dropdown.disabled = true;
+            dropdown.classList.remove('ready');
+        }
+    });
+    
+    // Hide price and yield sections when resetting
+    if (dropdownIds.includes('grade')) {
+        document.getElementById("priceSection").style.display = "none";
+        document.getElementById("yieldSection").style.display = "none";
+    }
+}
+
+function handlePestFormSubmit(e) {
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-bug fa-spin"></i> Analyzing Pest Risk...';
+    
+    // Form will submit normally, this is just for visual feedback
+    setTimeout(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+    }, 5000);
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+        <span>${message}</span>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            if (document.body.contains(notification)) {
+                document.body.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
+}
+</script>
+
+<style>
+  .profit-header, .pest-header {
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(0, 255, 127, 0.5);
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin-bottom: 30px;
+    text-align: center;
+    animation: titleGlow 2s ease-in-out infinite alternate;
+  }
+  
+  .pest-header {
+    color: #ffa500;
+    text-shadow: 0 0 30px rgba(255, 165, 0, 0.5);
+  }
+  
+  @keyframes titleGlow {
+    0% { filter: drop-shadow(0 0 10px rgba(0, 255, 127, 0.5)); }
+    100% { filter: drop-shadow(0 0 20px rgba(0, 255, 127, 0.8)); }
+  }
+  
+  .profit-card, .pest-card {
+    background: rgba(26, 31, 53, 0.8);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(0, 255, 127, 0.3);
+    border-radius: 20px;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .pest-card {
+    border-color: rgba(255, 165, 0, 0.3);
+  }
+  
+  .profit-card::before, .pest-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(circle at 10% 20%, rgba(0, 255, 127, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+    z-index: -1;
+  }
+  
+  .pest-card::before {
+    background: 
+      radial-gradient(circle at 10% 20%, rgba(255, 165, 0, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(255, 69, 0, 0.1) 0%, transparent 50%);
+  }
+  
+  .card-header-custom {
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+    color: var(--primary-dark);
+    padding: 20px 30px;
+    border-radius: 20px 20px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  
+  .pest-card-header {
+    background: linear-gradient(135deg, #ffa500, #ff4500);
+  }
+  
+  .mode-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .mode-btn {
+    padding: 8px 16px;
+    border: 2px solid var(--primary-dark);
+    background: transparent;
+    color: var(--primary-dark);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+  }
+  
+  .mode-btn:hover {
+    background: var(--primary-dark);
+    color: var(--accent-green);
+    transform: scale(1.05);
+  }
+  
+  .mode-btn.active-mode {
+    background: var(--primary-dark);
+    color: var(--accent-green);
+    box-shadow: 0 0 15px rgba(10, 15, 28, 0.5);
+  }
+  
+  .card-body-custom {
+    padding: 30px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-label {
+    color: var(--text-light);
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .enhanced-input, .enhanced-select {
+    background: rgba(10, 15, 28, 0.8);
+    border: 2px solid rgba(0, 255, 127, 0.3);
+    color: var(--text-light);
+    border-radius: 10px;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    width: 100%;
+  }
+  
+  .enhanced-input:focus, .enhanced-select:focus {
+    background: rgba(10, 15, 28, 0.9);
+    border-color: var(--accent-green);
+    box-shadow: 0 0 15px rgba(0, 255, 127, 0.3);
+    color: var(--text-light);
+    outline: none;
+    transform: translateY(-2px);
+  }
+  
+  .enhanced-input:read-only {
+    background: rgba(10, 15, 28, 0.6);
+    border-color: rgba(0, 255, 127, 0.2);
+    cursor: not-allowed;
+  }
+  
+  .enhanced-select option {
+    background: var(--secondary-dark);
+    color: var(--text-light);
+    padding: 8px;
+  }
+  
+  .data-loaded {
+    border-color: var(--accent-green);
+    box-shadow: 0 0 10px rgba(0, 255, 127, 0.3);
+  }
+  
+  .btn-custom {
+    background: linear-gradient(45deg, #666, #999);
+    border: none;
+    color: var(--text-light);
+    font-weight: bold;
+    padding: 12px 25px;
+    border-radius: 20px;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    cursor: not-allowed;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .btn-custom.ready {
+    background: linear-gradient(45deg, var(--accent-green), var(--accent-blue));
+    color: var(--primary-dark);
+    cursor: pointer;
+  }
+  
+  .btn-custom.ready::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: all 0.5s ease;
+  }
+  
+  .btn-custom.ready:hover::before {
+    left: 100%;
+  }
+  
+  .btn-custom.ready:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 255, 127, 0.4);
+  }
+  
+  .btn-pest {
+    background: linear-gradient(45deg, #ff4500, #ffa500);
+    border: none;
+    color: white;
+    font-weight: bold;
+    padding: 15px 30px;
+    border-radius: 20px;
+    width: 100%;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .btn-pest:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(255, 69, 0, 0.4);
+  }
+  
+  .price-results {
+    background: rgba(0, 255, 127, 0.1);
+    border: 1px solid rgba(0, 255, 127, 0.3);
+    border-radius: 15px;
+    padding: 25px;
+    margin-top: 20px;
+  }
+  
+  .price-results h6 {
+    color: var(--accent-green);
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .price-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+  }
+  
+  .price-item {
+    background: rgba(10, 15, 28, 0.6);
+    padding: 12px 15px;
+    border-radius: 8px;
+    border-left: 3px solid var(--accent-green);
+  }
+  
+  .price-item strong {
+    color: var(--accent-green);
+    font-size: 0.9rem;
+  }
+  
+  .price-value {
+    color: var(--text-light);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  
+  .pest-results {
+    background: rgba(255, 165, 0, 0.1);
+    border: 1px solid rgba(255, 165, 0, 0.3);
+    border-radius: 15px;
+    padding: 25px;
+    margin-top: 20px;
+  }
+  
+  .pest-results strong {
+    color: #ffa500;
+    font-size: 1.1rem;
+  }
+  
+  .notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(26, 31, 53, 0.95);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(0, 255, 127, 0.3);
+    border-radius: 12px;
+    padding: 15px 20px;
+    color: var(--text-light);
+    z-index: 10000;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 350px;
+  }
+  
+  .notification.success {
+    border-color: rgba(0, 255, 127, 0.5);
+  }
+  
+  .notification.error {
+    border-color: rgba(220, 53, 69, 0.5);
+  }
+  
+  .notification.show {
+    transform: translateX(0);
+  }
+  
+  .notification i {
+    color: var(--accent-green);
+  }
+  
+  .notification.success i {
+    color: var(--accent-green);
+  }
+  
+  .notification.error i {
+    color: #ff6b6b;
+  }
+  
+  /* Animation Classes */
+  .fade-in {
+    animation: fadeIn 0.8s ease-in;
+  }
+  
+  .slide-in-up {
+    animation: slideInUp 0.6s ease-out;
+  }
+  
+  .slide-in-left {
+    animation: slideInLeft 0.6s ease-out;
+  }
+  
+  .fade-in-slide {
+    animation: fadeInSlide 0.5s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes slideInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-50px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  
+  @keyframes fadeInSlide {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .card-header-custom {
+      flex-direction: column;
+      gap: 15px;
+      text-align: center;
+    }
+    
+    .mode-buttons {
+      justify-content: center;
+    }
+    
+    .card-body-custom {
+      padding: 20px;
+    }
+    
+    .price-info {
+      grid-template-columns: 1fr;
+    }
+    
+    .notification {
+      right: 10px;
+      left: 10px;
+      max-width: none;
+      transform: translateY(-100%);
+    }
+    
+    .notification.show {
+      transform: translateY(0);
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="profit-header">💰 Profit & Pest Risk Estimation</h2>
+
+  <!-- ================= Profit Estimation Form ================= -->
+  <div class="profit-card">
+    <div class="card-header-custom">
+      <span><i class="fas fa-chart-line"></i> Profit Estimation</span>
+      <div class="mode-buttons">
+        <button class="mode-btn" id="manualBtn">
+          <i class="fas fa-keyboard"></i> Manual
+        </button>
+        <button class="mode-btn" id="autoBtn">
+          <i class="fas fa-magic"></i> Automatic
+        </button>
+      </div>
+    </div>
+
+    <div class="card-body-custom">
+      <!-- ================= Automatic Section ================= -->
+      <div id="automaticSection" style="display:none;">
+        <h5 class="mb-4" style="color: var(--accent-green); display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-robot"></i> Automatic Profit Estimation
+        </h5>
+        <form id="autoForm">
+          <div class="row mb-4">
+            <div class="col-md-3 form-group">
+              <label class="form-label">
+                <i class="fas fa-map"></i> State
+              </label>
+              <select class="enhanced-select" id="auto_state" name="state">
+                <option value="">-- Select State --</option>
+              </select>
+            </div>
+            <div class="col-md-3 form-group">
+              <label class="form-label">
+                <i class="fas fa-map-marker"></i> District
+              </label>
+              <select class="enhanced-select" id="auto_district" name="district" disabled>
+                <option value="">-- Select District --</option>
+              </select>
+            </div>
+            <div class="col-md-3 form-group">
+              <label class="form-label">
+                <i class="fas fa-store"></i> Market
+              </label>
+              <select class="enhanced-select" id="auto_market" name="market" disabled>
+                <option value="">-- Select Market --</option>
+              </select>
+            </div>
+            <div class="col-md-3 form-group">
+              <label class="form-label">
+                <i class="fas fa-seedling"></i> Commodity
+              </label>
+              <select class="enhanced-select" id="auto_commodity" name="commodity" disabled>
+                <option value="">-- Select Commodity --</option>
+              </select>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-12 d-flex justify-content-end">
+              <button type="button" class="btn-custom" id="fetchAutoPrice" disabled>
+                <i class="fas fa-download"></i> Fetch Price
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <!-- Results -->
+        <div id="autoPriceResult" class="price-results" style="display:none;">
+          <h6><i class="fas fa-chart-bar"></i> Price Information</h6>
+          <div class="price-info">
+            <div class="price-item">
+              <strong>State:</strong>
+              <div class="price-value" id="res_state"></div>
+            </div>
+            <div class="price-item">
+              <strong>District:</strong>
+              <div class="price-value" id="res_district"></div>
+            </div>
+            <div class="price-item">
+              <strong>Market:</strong>
+              <div class="price-value" id="res_market"></div>
+            </div>
+            <div class="price-item">
+              <strong>Commodity:</strong>
+              <div class="price-value" id="res_commodity"></div>
+            </div>
+            <div class="price-item">
+              <strong>Date:</strong>
+              <div class="price-value" id="res_date"></div>
+            </div>
+            <div class="price-item">
+              <strong>Min Price:</strong>
+              <div class="price-value" id="res_min"></div>
+            </div>
+            <div class="price-item">
+              <strong>Max Price:</strong>
+              <div class="price-value" id="res_max"></div>
+            </div>
+            <div class="price-item">
+              <strong>Modal Price:</strong>
+              <div class="price-value" id="res_modal"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Yield & Estimated Earnings (shown after fetching price) -->
+      <div id="autoYieldSection" class="row mb-3" style="display:none;">
+        <div class="col-md-4 form-group">
+          <label class="form-label">
+            <i class="fas fa-balance-scale"></i> Yield (Quintals)
+          </label>
+          <input type="number" class="enhanced-input" id="auto_yield" value="0" placeholder="Enter yield">
+        </div>
+        <div class="col-md-4 form-group">
+          <label class="form-label">
+            <i class="fas fa-calculator"></i> Price Basis
+          </label>
+          <select class="enhanced-select" id="auto_price_basis">
+            <option value="modal">Modal Price</option>
+            <option value="avg">Average of Min & Max</option>
+          </select>
+        </div>
+        <div class="col-md-4 form-group">
+          <label class="form-label">
+            <i class="fas fa-rupee-sign"></i> Estimated Earnings
+          </label>
+          <input type="text" class="enhanced-input" id="auto_earnings" readonly>
+        </div>
+      </div>
+
+      <!-- ================= Manual Section ================= -->
+      <div id="manualSection" style="display:none;">
+        <h5 class="mb-4" style="color: var(--accent-green); display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-edit"></i> Manual Profit Estimation
+        </h5>
+        
+        <div class="row mb-4">
+          <div class="col-md-4 form-group">
+            <label class="form-label">
+              <i class="fas fa-map-marker"></i> District
+            </label>
+            <select class="enhanced-select" id="district">
+              <option value="">-- Select District --</option>
+              {% for d in districts %}
+              <option value="{{ d }}">{{ d }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4 form-group">
+            <label class="form-label">
+              <i class="fas fa-store"></i> Market
+            </label>
+            <select class="enhanced-select" id="market" disabled>
+              <option value="">-- Select Market --</option>
+            </select>
+          </div>
+          <div class="col-md-4 form-group">
+            <label class="form-label">
+              <i class="fas fa-seedling"></i> Commodity
+            </label>
+            <select class="enhanced-select" id="commodity" disabled>
+              <option value="">-- Select Commodity --</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row mb-4">
+          <div class="col-md-4 form-group">
+            <label class="form-label">
+              <i class="fas fa-tags"></i> Variety
+            </label>
+            <select class="enhanced-select" id="variety" disabled>
+              <option value="">-- Select Variety --</option>
+            </select>
+          </div>
+          <div class="col-md-4 form-group">
+            <label class="form-label">
+              <i class="fas fa-award"></i> Grade
+            </label>
+            <select class="enhanced-select" id="grade" disabled>
+              <option value="">-- Select Grade --</option>
+            </select>
+          </div>
+          <div class="col-md-4 form-group d-flex align-items-end">
+            <button class="btn-custom w-100" id="seePrices" disabled>
+              <i class="fas fa-eye"></i> See Prices
+            </button>
+          </div>
+        </div>
+
+        <!-- Prices -->
+        <div id="priceSection" style="display:none;">
+          <div class="row mb-4">
+            <div class="col-md-4 form-group">
+              <label class="form-label">
+                <i class="fas fa-arrow-down"></i> Min Price
+              </label>
+              <input type="text" class="enhanced-input" id="min_price" readonly>
+            </div>
+            <div class="col-md-4 form-group">
+              <label class="form-label">
+                <i class="fas fa-arrow-up"></i> Max Price
+              </label>
+              <input type="text" class="enhanced-input" id="max_price" readonly>
+            </div>
+            <div class="col-md-4 form-group">
+              <label class="form-label">
+                <i class="fas fa-chart-line"></i> Modal Price
+              </label>
+              <input type="text" class="enhanced-input" id="modal_price" readonly>
+            </div>
+          </div>
+
+          <!-- Yield -->
+          <div class="row mb-3" id="yieldSection">
+            <div class="col-md-4 form-group">
+              <label class="form-label">
+                <i class="fas fa-balance-scale"></i> Yield (Quintals)
+              </label>
+              <input type="number" class="enhanced-input" id="yield" placeholder="Enter yield">
+            </div>
+            <div class="col-md-4 form-group">
+              <label class="form-label">
+                <i class="fas fa-calculator"></i> Price Basis
+              </label>
+              <select class="enhanced-select" id="price_basis">
+                <option value="modal">Modal Price</option>
+                <option value="avg">Average of Min & Max</option>
+              </select>
+            </div>
+            <div class="col-md-4 form-group">
+              <label class="form-label">
+                <i class="fas fa-rupee-sign"></i> Estimated Earnings
+              </label>
+              <input type="text" class="enhanced-input" id="earnings" readonly>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-5">
+  <h2 class="pest-header">🐛 Pest Risk Prediction</h2>
+
+  <!-- ================= Pest Risk Prediction Form ================= -->
+  <div class="pest-card">
+    <div class="card-header-custom pest-card-header">
+      <span><i class="fas fa-bug"></i> Pest Risk Prediction</span>
+    </div>
+    <div class="card-body-custom">
+      <form method="POST" action="{{ url_for('pest_routes.predict_pest') }}" id="pestForm">
+        <div class="row mb-4">
+          <div class="col-md-4 form-group">
+            <label class="form-label">
+              <i class="fas fa-leaf"></i> Stage
+            </label>
+            <select class="enhanced-select" name="Stage" required>
+              <option value="">-- Select Stage --</option>
+              <option value="Vegetative" {% if inputs.get("stage")=="Vegetative" %}selected{% endif %}>🌱 Vegetative</option>
+              <option value="Flowering" {% if inputs.get("stage")=="Flowering" %}selected{% endif %}>🌸 Flowering</option>
+              <option value="Maturity" {% if inputs.get("stage")=="Maturity" %}selected{% endif %}>🌾 Maturity</option>
+            </select>
+          </div>
+
+          <div class="col-md-4 form-group">
+            <label class="form-label">
+              <i class="fas fa-percentage"></i> % Infested Plants
+            </label>
+            <select class="enhanced-select" name="Infestation" required>
+              <option value="0" {% if inputs.get("infestation")==0 %}selected{% endif %}>None (0%)</option>
+              <option value="5" {% if inputs.get("infestation")==5 %}selected{% endif %}>Less than 10%</option>
+              <option value="20" {% if inputs.get("infestation")==20 %}selected{% endif %}>10–30%</option>
+              <option value="40" {% if inputs.get("infestation")==40 %}selected{% endif %}>More than 30%</option>
+            </select>
+          </div>
+
+          <div class="col-md-4 form-group">
+            <label class="form-label">
+              <i class="fas fa-dna"></i> Variety Type
+            </label>
+            <select class="enhanced-select" name="Variety" required>
+              <option value="Resistant" {% if inputs.get("variety")=="Resistant" %}selected{% endif %}>🛡️ Resistant</option>
+              <option value="Moderately Resistant" {% if inputs.get("variety")=="Moderately Resistant" %}selected{% endif %}>⚖️ Moderately Resistant</option>
+              <option value="Susceptible" {% if inputs.get("variety")=="Susceptible" %}selected{% endif %}>⚠️ Susceptible</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row mb-4">
+          <div class="col-md-4 form-group">
+            <label class="form-label">
+              <i class="fas fa-flask"></i> Fertilizer Usage
+            </label>
+            <select class="enhanced-select" name="Fertilizer">
+              <option value="Normal" {% if inputs.get("fertilizer")=="Normal" %}selected{% endif %}>Normal</option>
+              <option value="Heavy N" {% if inputs.get("fertilizer")=="Heavy N" %}selected{% endif %}>Heavy Nitrogen</option>
+            </select>
+          </div>
+
+          <div class="col-md-4 form-group">
+            <label class="form-label">
+              <i class="fas fa-spray-can"></i> Pesticide History
+            </label>
+            <select class="enhanced-select" name="Pesticide">
+              <option value="No Spray" {% if inputs.get("pesticide")=="No Spray" %}selected{% endif %}>No Spray</option>
+              <option value="Recent Spray" {% if inputs.get("pesticide")=="Recent Spray" %}selected{% endif %}>Recent Spray</option>
+            </select>
+          </div>
+
+          <div class="col-md-4 form-group">
+            <label class="form-label">
+              <i class="fas fa-users"></i> Neighbor Pest Alerts
+            </label>
+            <select class="enhanced-select" name="Neighbor">
+              <option value="None" {% if inputs.get("neighbor")=="None" %}selected{% endif %}>None</option>
+              <option value="Nearby" {% if inputs.get("neighbor")=="Nearby" %}selected{% endif %}>Nearby Village</option>
+              <option value="Same Block" {% if inputs.get("neighbor")=="Same Block" %}selected{% endif %}>Same Block</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row mb-4">
+          <div class="col-md-4 form-group">
+            <label class="form-label">
+              <i class="fas fa-cloud-sun"></i> Weather Condition
+            </label>
+            <select class="enhanced-select" name="Weather">
+              <option value="Unfavorable" {% if inputs.get("weather")=="Unfavorable" %}selected{% endif %}>Unfavorable</option>
+              <option value="Neutral" {% if inputs.get("weather")=="Neutral" %}selected{% endif %}>Neutral</option>
+              <option value="Favorable" {% if inputs.get("weather")=="Favorable" %}selected{% endif %}>Favorable</option>
+            </select>
+          </div>
+
+          <div class="col-md-4 form-group">
+            <label class="form-label">
+              <i class="fas fa-crosshairs"></i> Trap Counts
+            </label>
+            <select class="enhanced-select" name="Traps">
+              <option value="None" {% if inputs.get("traps")=="None" %}selected{% endif %}>None</option>
+              <option value="Low" {% if inputs.get("traps")=="Low" %}selected{% endif %}>Low (1–10/week)</option>
+              <option value="Medium" {% if inputs.get("traps")=="Medium" %}selected{% endif %}>Medium (10–50/week)</option>
+              <option value="High" {% if inputs.get("traps")=="High" %}selected{% endif %}>High (&gt;50/week)</option>
+            </select>
+          </div>
+
+          <div class="col-md-4 form-group d-flex align-items-end">
+            <button type="submit" class="btn-pest">
+              <i class="fas fa-search"></i> Predict Pest Risk
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <!-- ================= Results ================= -->
+      {% if pest_risk %}
+      <div class="pest-results">
+        <h6 style="color: #ffa500; display: flex; align-items: center; gap: 8px; margin-bottom: 15px;">
+          <i class="fas fa-chart-pie"></i> Pest Risk Analysis
+        </h6>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <strong>Pest Risk:</strong> <span style="color: var(--text-light);">{{ pest_risk }}</span>
+          </div>
+          <div style="color: var(--text-light); font-size: 1.2rem; font-weight: bold;">
+            <strong>Score:</strong> {{ pest_score }}
+          </div>
+        </div>
+        <div style="margin-top: 15px; height: 6px; background: rgba(255, 165, 0, 0.2); border-radius: 3px; overflow: hidden;">
+          <div style="height: 100%; background: linear-gradient(90deg, #ffa500, #ff4500); width: {{ (pest_score|float * 10)|round }}%; border-radius: 3px; transition: width 2s ease;"></div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

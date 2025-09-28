@@ -1,0 +1,655 @@
+{% extends "base.html" %}
+
+{% block title %}🌿 Disease Detector{% endblock %}
+
+{% block head %}
+<script>
+let selectedFile = null;
+
+function setupFileUpload() {
+    const fileInput = document.getElementById('image');
+    const dropZone = document.getElementById('dropZone');
+    const previewContainer = document.getElementById('previewContainer');
+    const previewImage = document.getElementById('previewImage');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+
+    // File input change handler
+    fileInput.addEventListener('change', handleFileSelect);
+    
+    // Drag and drop handlers
+    dropZone.addEventListener('dragover', handleDragOver);
+    dropZone.addEventListener('dragleave', handleDragLeave);
+    dropZone.addEventListener('drop', handleDrop);
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    function handleFileSelect(e) {
+        const file = e.target.files[0];
+        if (file) {
+            processFile(file);
+        }
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+            fileInput.files = e.dataTransfer.files;
+            processFile(file);
+        }
+    }
+
+    function processFile(file) {
+        selectedFile = file;
+        
+        // Show file info
+        fileName.textContent = file.name;
+        fileSize.textContent = formatFileSize(file.size);
+        
+        // Create preview
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImage.src = e.target.result;
+            previewContainer.style.display = 'block';
+            previewContainer.classList.add('fade-in');
+            
+            // Hide drop zone text
+            document.querySelector('.upload-text').style.display = 'none';
+            document.querySelector('.upload-icon').style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+        
+        // Update submit button
+        updateSubmitButton();
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+}
+
+function updateSubmitButton() {
+    const submitBtn = document.querySelector('.submit-btn');
+    const cropSelect = document.getElementById('crop');
+    
+    if (selectedFile && cropSelect.value) {
+        submitBtn.disabled = false;
+        submitBtn.classList.add('ready');
+        submitBtn.innerHTML = '<i class="fas fa-search"></i> Detect Disease';
+    } else {
+        submitBtn.disabled = true;
+        submitBtn.classList.remove('ready');
+        submitBtn.innerHTML = '<i class="fas fa-upload"></i> Select Crop & Upload Image';
+    }
+}
+
+function clearPreview() {
+    selectedFile = null;
+    document.getElementById('previewContainer').style.display = 'none';
+    document.querySelector('.upload-text').style.display = 'block';
+    document.querySelector('.upload-icon').style.display = 'block';
+    document.getElementById('image').value = '';
+    updateSubmitButton();
+}
+
+function handleSubmit(e) {
+    const submitBtn = e.target.querySelector('.submit-btn');
+    const originalText = submitBtn.innerHTML;
+    
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing Image...';
+    
+    // Add a slight delay to show the loading state
+    setTimeout(() => {
+        // Form will submit normally
+    }, 500);
+}
+
+window.onload = function() {
+    setupFileUpload();
+    
+    // Set up crop selector change handler
+    document.getElementById('crop').addEventListener('change', updateSubmitButton);
+    
+    // Set up form submit handler
+    document.querySelector('form').addEventListener('submit', handleSubmit);
+    
+    // Add entrance animations
+    document.querySelector('.page-header').classList.add('slide-in-left');
+    document.querySelector('.upload-form').classList.add('slide-in-up');
+    
+    // If there are results, add animation
+    const resultsCard = document.querySelector('.results-card');
+    if (resultsCard) {
+        resultsCard.classList.add('fade-in');
+    }
+};
+</script>
+
+<style>
+  .page-header {
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(0, 255, 127, 0.5);
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 40px;
+    text-align: center;
+    animation: titleGlow 2s ease-in-out infinite alternate;
+  }
+  
+  @keyframes titleGlow {
+    0% { filter: drop-shadow(0 0 10px rgba(0, 255, 127, 0.5)); }
+    100% { filter: drop-shadow(0 0 20px rgba(0, 255, 127, 0.8)); }
+  }
+  
+  .upload-form {
+    background: rgba(26, 31, 53, 0.8);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(0, 255, 127, 0.3);
+    border-radius: 20px;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 30px;
+  }
+  
+  .upload-form::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(circle at 10% 20%, rgba(0, 255, 127, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+    z-index: -1;
+  }
+  
+  .form-group {
+    margin-bottom: 30px;
+  }
+  
+  .form-label {
+    color: var(--text-light);
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: block;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .crop-selector {
+    background: rgba(10, 15, 28, 0.8);
+    border: 2px solid rgba(0, 255, 127, 0.3);
+    color: var(--text-light);
+    border-radius: 12px;
+    padding: 15px 20px;
+    font-size: 1.1rem;
+    width: 100%;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .crop-selector:focus {
+    background: rgba(10, 15, 28, 0.9);
+    border-color: var(--accent-green);
+    box-shadow: 0 0 20px rgba(0, 255, 127, 0.3);
+    color: var(--text-light);
+    outline: none;
+  }
+  
+  .crop-selector option {
+    background: var(--secondary-dark);
+    color: var(--text-light);
+    padding: 10px;
+  }
+  
+  .upload-area {
+    position: relative;
+  }
+  
+  .drop-zone {
+    border: 3px dashed rgba(0, 255, 127, 0.4);
+    border-radius: 15px;
+    padding: 60px 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    background: rgba(0, 255, 127, 0.05);
+    position: relative;
+    overflow: hidden;
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .drop-zone::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent, rgba(0, 255, 127, 0.1), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
+  
+  .drop-zone:hover::before {
+    transform: translateX(100%);
+  }
+  
+  .drop-zone:hover {
+    border-color: var(--accent-green);
+    background: rgba(0, 255, 127, 0.1);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 255, 127, 0.2);
+  }
+  
+  .drop-zone.drag-over {
+    border-color: var(--accent-blue);
+    background: rgba(0, 212, 255, 0.1);
+    transform: scale(1.02);
+    box-shadow: 0 15px 40px rgba(0, 212, 255, 0.3);
+  }
+  
+  .upload-icon {
+    font-size: 4rem;
+    color: var(--accent-green);
+    margin-bottom: 20px;
+    animation: bounce 2s ease-in-out infinite;
+  }
+  
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+  }
+  
+  .upload-text {
+    color: var(--text-light);
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+  
+  .upload-hint {
+    color: rgba(224, 230, 237, 0.7);
+    font-size: 0.95rem;
+  }
+  
+  .file-input-hidden {
+    display: none;
+  }
+  
+  .preview-container {
+    display: none;
+    text-align: center;
+    position: relative;
+  }
+  
+  .preview-image {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    margin-bottom: 20px;
+    border: 2px solid var(--accent-green);
+  }
+  
+  .file-info {
+    background: rgba(10, 15, 28, 0.8);
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .file-name {
+    color: var(--accent-green);
+    font-weight: bold;
+    font-size: 1rem;
+  }
+  
+  .file-size {
+    color: rgba(224, 230, 237, 0.8);
+    font-size: 0.9rem;
+  }
+  
+  .clear-btn {
+    background: transparent;
+    border: 2px solid #ff6b6b;
+    color: #ff6b6b;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+  }
+  
+  .clear-btn:hover {
+    background: #ff6b6b;
+    color: white;
+    transform: scale(1.05);
+  }
+  
+  .submit-btn {
+    background: linear-gradient(45deg, #666, #999);
+    border: none;
+    color: var(--text-light);
+    font-weight: bold;
+    font-size: 1.2rem;
+    padding: 18px 40px;
+    border-radius: 25px;
+    width: 100%;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    position: relative;
+    overflow: hidden;
+    cursor: not-allowed;
+  }
+  
+  .submit-btn.ready {
+    background: linear-gradient(45deg, var(--accent-green), var(--accent-blue));
+    color: var(--primary-dark);
+    cursor: pointer;
+  }
+  
+  .submit-btn.ready::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: all 0.5s ease;
+  }
+  
+  .submit-btn.ready:hover::before {
+    left: 100%;
+  }
+  
+  .submit-btn.ready:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 255, 127, 0.4);
+  }
+  
+  .submit-btn:disabled {
+    opacity: 0.7;
+    transform: none;
+  }
+  
+  .results-card {
+    background: rgba(26, 31, 53, 0.9);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(0, 255, 127, 0.4);
+    border-radius: 20px;
+    padding: 30px;
+    margin-top: 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .results-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-green), var(--accent-blue), var(--accent-green));
+    animation: borderGlow 2s ease-in-out infinite;
+  }
+  
+  @keyframes borderGlow {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+  
+  .results-header {
+    color: var(--accent-green);
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .uploaded-image {
+    max-width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 15px;
+    border: 3px solid var(--accent-green);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    margin-bottom: 25px;
+  }
+  
+  .prediction-result {
+    background: rgba(10, 15, 28, 0.8);
+    padding: 20px;
+    border-radius: 15px;
+    border-left: 5px solid var(--accent-blue);
+    margin-bottom: 15px;
+  }
+  
+  .prediction-text {
+    color: var(--text-light);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  
+  .confidence-text {
+    color: var(--accent-blue);
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  
+  .confidence-bar {
+    background: rgba(0, 212, 255, 0.2);
+    height: 8px;
+    border-radius: 4px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+  
+  .confidence-fill {
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
+    height: 100%;
+    border-radius: 4px;
+    transition: width 2s ease-in-out;
+    animation: confidenceGlow 2s ease-in-out infinite alternate;
+  }
+  
+  @keyframes confidenceGlow {
+    0% { box-shadow: 0 0 5px var(--accent-blue); }
+    100% { box-shadow: 0 0 15px var(--accent-blue); }
+  }
+  
+  /* Animation Classes */
+  .fade-in {
+    animation: fadeIn 0.8s ease-in;
+  }
+  
+  .slide-in-up {
+    animation: slideInUp 0.6s ease-out;
+  }
+  
+  .slide-in-left {
+    animation: slideInLeft 0.6s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes slideInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-50px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .upload-form {
+      padding: 20px;
+    }
+    
+    .drop-zone {
+      padding: 40px 20px;
+      min-height: 200px;
+    }
+    
+    .upload-icon {
+      font-size: 3rem;
+    }
+    
+    .page-header {
+      font-size: 2rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .page-header {
+      font-size: 1.8rem;
+    }
+    
+    .upload-text {
+      font-size: 1.1rem;
+    }
+    
+    .drop-zone {
+      padding: 30px 15px;
+      min-height: 180px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="page-header">🌿 Disease Detector</h2>
+    
+    <form action="{{ url_for('disease.detect_disease') }}" method="post" enctype="multipart/form-data" class="upload-form">
+        
+        <div class="form-group">
+            <label for="crop" class="form-label">
+                <i class="fas fa-seedling"></i> Select Crop:
+            </label>
+            <select class="crop-selector" id="crop" name="crop" required>
+                <option value="">-- Choose Crop --</option>
+                <option value="cotton">🌾 Cotton</option>
+                <option value="tomato">🍅 Tomato</option>
+                <option value="maize">🌽 Maize</option>
+            </select>
+        </div>
+
+        <div class="form-group upload-area">
+            <label class="form-label">
+                <i class="fas fa-camera"></i> Upload Leaf Image:
+            </label>
+            
+            <div class="drop-zone" id="dropZone">
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <div class="upload-text">
+                    Drag & Drop your image here
+                </div>
+                <div class="upload-hint">
+                    or click to select from your device
+                </div>
+                <div class="upload-hint" style="margin-top: 10px; font-size: 0.85rem;">
+                    Supports: JPG, PNG, GIF (Max: 10MB)
+                </div>
+                
+                <!-- Preview Container -->
+                <div id="previewContainer" class="preview-container">
+                    <img id="previewImage" class="preview-image" alt="Preview">
+                    <div class="file-info">
+                        <div>
+                            <div id="fileName" class="file-name"></div>
+                            <div id="fileSize" class="file-size"></div>
+                        </div>
+                        <button type="button" class="clear-btn" onclick="clearPreview()">
+                            <i class="fas fa-times"></i> Remove
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <input type="file" class="file-input-hidden" id="image" name="image" accept="image/*" required>
+        </div>
+
+        <button type="submit" class="submit-btn" disabled>
+            <i class="fas fa-upload"></i> Select Crop & Upload Image
+        </button>
+    </form>
+
+    {% if prediction %}
+    <div class="results-card">
+        <h5 class="results-header">
+            <i class="fas fa-microscope"></i> 📸 Disease Analysis Results
+        </h5>
+        
+        <div class="text-center mb-4">
+            <img src="{{ image_url }}" class="uploaded-image" alt="Uploaded leaf image">
+        </div>
+
+        <div class="prediction-result">
+            <div class="prediction-text">
+                <i class="fas fa-leaf"></i> {{ prediction }}
+            </div>
+            <div class="confidence-text">
+                <i class="fas fa-chart-bar"></i> {{ confidence }}
+            </div>
+            {% if confidence %}
+            <div class="confidence-bar">
+                <div class="confidence-fill" style="width: {{ confidence.split('%')[0] if '%' in confidence else '85' }}%"></div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background: rgba(0, 255, 127, 0.1); border-radius: 10px; border: 1px solid rgba(0, 255, 127, 0.3);">
+            <p style="margin: 0; color: var(--text-light); font-size: 0.95rem;">
+                <i class="fas fa-lightbulb" style="color: var(--accent-green);"></i>
+                <strong>Tip:</strong> For more accurate results, ensure the leaf image is clear, well-lit, and shows the affected area prominently.
+            </p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

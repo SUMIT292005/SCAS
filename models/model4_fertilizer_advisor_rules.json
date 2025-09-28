@@ -1,0 +1,647 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "units": {
+      "N": "soil test index (relative)",
+      "P": "soil test index (relative)",
+      "K": "soil test index (relative)",
+      "pH": "water pH (0-14)",
+      "rain_mm_day": "millimeters/day",
+      "temperature_c": "°C",
+      "humidity_pct": "%"
+    },
+    "thresholds": {
+      "N": {
+        "low": "<50",
+        "medium": "50–100",
+        "high": ">100"
+      },
+      "P": {
+        "low": "<30",
+        "medium": "30–60",
+        "high": ">60"
+      },
+      "K": {
+        "low": "<40",
+        "medium": "40–80",
+        "high": ">80"
+      },
+      "pH": {
+        "acidic": "<6.0",
+        "neutral": "6.0–7.5",
+        "alkaline": ">7.5"
+      }
+    },
+    "weather_rules": {
+      "apply_only_if": {
+        "rain_mm_day": "< 10",
+        "temperature_c": "15–35",
+        "humidity_pct": "< 85 for foliar"
+      },
+      "delay_if": {
+        "rain_mm_day": ">= 20",
+        "temperature_c": ">= 40 or <= 10",
+        "humidity_pct": ">= 90 for foliar"
+      }
+    },
+    "notes": [
+      "These are rule-of-thumb suggestions for academic use. Local agronomy guides should take precedence.",
+      "Legumes fix nitrogen; nitrogen recommendations are conservative for pulses.",
+      "For alkaline soils, prefer SSP over DAP for phosphorus and consider elemental sulfur or ammonium sulfate."
+    ]
+  },
+  "Rice": {
+    "N": {
+      "low": "Urea (split doses)",
+      "medium": "Urea split: basal + tillering + panicle",
+      "high": "No additional N needed"
+    },
+    "P": {
+      "low": "DAP or SSP at transplanting",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP split: basal + panicle initiation",
+      "medium": "Maintain with MOP",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Wheat": {
+    "N": {
+      "low": "Urea (split doses)",
+      "medium": "Urea split: basal + crown-root initiation",
+      "high": "No additional N needed"
+    },
+    "P": {
+      "low": "DAP at sowing",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP (split)",
+      "medium": "Maintain with MOP",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Jowar (Sorghum)": {
+    "N": {
+      "low": "Urea (split doses)",
+      "medium": "DAP for basal + Urea topdress",
+      "high": "No additional N needed"
+    },
+    "P": {
+      "low": "SSP or DAP (basal)",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP (split)",
+      "medium": "MOP maintenance; sorghum responds to K",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Bajra (Pearl Millet)": {
+    "N": {
+      "low": "Urea (split doses)",
+      "medium": "DAP for basal + Urea topdress",
+      "high": "No additional N needed"
+    },
+    "P": {
+      "low": "SSP or DAP (basal)",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP (split)",
+      "medium": "Maintain with MOP",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Maize": {
+    "N": {
+      "low": "Urea (split doses)",
+      "medium": "Urea split: basal + knee-high + tasseling",
+      "high": "No additional N needed"
+    },
+    "P": {
+      "low": "DAP band placement at sowing",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP at knee-high",
+      "medium": "Maintain with MOP",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Tur (Pigeon Pea)": {
+    "N": {
+      "low": "Starter N via DAP; avoid excess urea",
+      "medium": "No additional N; use DAP basal",
+      "high": "No N required"
+    },
+    "P": {
+      "low": "SSP/DAP basal is important",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP if deficient",
+      "medium": "Maintain with MOP",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Chana (Chickpea)": {
+    "N": {
+      "low": "Small starter N with DAP; avoid excess urea",
+      "medium": "No additional N needed",
+      "high": "No N required"
+    },
+    "P": {
+      "low": "SSP/DAP basal; critical for nodulation",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP (split)",
+      "medium": "Maintain with MOP",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Moong (Green Gram)": {
+    "N": {
+      "low": "Starter N with DAP only; avoid urea topdress",
+      "medium": "No additional N needed",
+      "high": "No N required"
+    },
+    "P": {
+      "low": "SSP or DAP (basal)",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP (split)",
+      "medium": "Maintain with MOP",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Urad (Black Gram)": {
+    "N": {
+      "low": "Starter N with DAP only; avoid urea topdress",
+      "medium": "No additional N needed",
+      "high": "No N required"
+    },
+    "P": {
+      "low": "SSP or DAP (basal)",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP (split)",
+      "medium": "Maintain with MOP",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Soybean": {
+    "N": {
+      "low": "No urea; starter N via DAP if needed",
+      "medium": "No additional N",
+      "high": "No N required"
+    },
+    "P": {
+      "low": "SSP/DAP basal (soybean needs P)",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP if deficient",
+      "medium": "Maintain with MOP",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur; gypsum if sodic"
+    }
+  },
+  "Groundnut (Peanut)": {
+    "N": {
+      "low": "Urea (split doses)",
+      "medium": "DAP for basal + Urea topdress",
+      "high": "No additional N needed"
+    },
+    "P": {
+      "low": "SSP basal (adds sulfur)",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP if deficient",
+      "medium": "Maintain with MOP",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Gypsum at pegging; SSP preferred"
+    }
+  },
+  "Sunflower": {
+    "N": {
+      "low": "Urea (split doses)",
+      "medium": "DAP for basal + Urea topdress",
+      "high": "No additional N needed"
+    },
+    "P": {
+      "low": "SSP basal; sunflower needs S",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP (split)",
+      "medium": "Maintain with MOP",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Safflower": {
+    "N": {
+      "low": "Urea (split doses)",
+      "medium": "DAP for basal + Urea topdress",
+      "high": "No additional N needed"
+    },
+    "P": {
+      "low": "SSP basal; safflower benefits from S",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP if deficient",
+      "medium": "Maintain with MOP",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Cotton": {
+    "N": {
+      "low": "Urea (split doses)",
+      "medium": "Urea split across square/flower/boll set",
+      "high": "No additional N needed"
+    },
+    "P": {
+      "low": "SSP basal (adds S)",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP split (cotton is K-hungry)",
+      "medium": "MOP maintenance",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Sugarcane": {
+    "N": {
+      "low": "Urea (split doses)",
+      "medium": "Urea split across early tillering + grand growth",
+      "high": "No additional N needed"
+    },
+    "P": {
+      "low": "DAP/SSP basal at planting",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP split; crucial for cane quality",
+      "medium": "MOP maintenance",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Onion": {
+    "N": {
+      "low": "Urea (split doses)",
+      "medium": "Urea split; avoid late N to reduce soft bulbs",
+      "high": "No additional N needed"
+    },
+    "P": {
+      "low": "SSP basal",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP (bulb quality)",
+      "medium": "Maintain with MOP",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Potato": {
+    "N": {
+      "low": "Urea (split doses)",
+      "medium": "Urea split; avoid late N to prevent viney growth",
+      "high": "No additional N needed"
+    },
+    "P": {
+      "low": "DAP at planting",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP split; potato needs high K",
+      "medium": "Maintain with MOP",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Tomato": {
+    "N": {
+      "low": "Urea (split doses)",
+      "medium": "DAP for basal + Urea topdress",
+      "high": "No additional N needed"
+    },
+    "P": {
+      "low": "SSP/DAP basal",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP split (fruit set & quality)",
+      "medium": "Maintain with MOP",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Brinjal (Eggplant)": {
+    "N": {
+      "low": "Urea (split doses)",
+      "medium": "DAP for basal + Urea topdress",
+      "high": "No additional N needed"
+    },
+    "P": {
+      "low": "SSP or DAP (basal)",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP split; improves fruiting",
+      "medium": "Maintain with MOP",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Okra (Ladyfinger)": {
+    "N": {
+      "low": "Urea (split doses)",
+      "medium": "DAP for basal + Urea topdress",
+      "high": "No additional N needed"
+    },
+    "P": {
+      "low": "SSP basal",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP if deficient",
+      "medium": "Maintain with MOP",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Chilli": {
+    "N": {
+      "low": "Urea (split doses)",
+      "medium": "DAP for basal + Urea topdress",
+      "high": "No additional N needed"
+    },
+    "P": {
+      "low": "SSP basal",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP split (pungency & yield)",
+      "medium": "Maintain with MOP",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Garlic": {
+    "N": {
+      "low": "Urea (split doses)",
+      "medium": "DAP for basal + Urea topdress",
+      "high": "No additional N needed"
+    },
+    "P": {
+      "low": "SSP basal",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP for bulb development",
+      "medium": "Maintain with MOP",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Ginger": {
+    "N": {
+      "low": "Urea (split doses)",
+      "medium": "DAP for basal + Urea topdress",
+      "high": "No additional N needed"
+    },
+    "P": {
+      "low": "SSP basal",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP split for rhizome",
+      "medium": "Maintain with MOP",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Banana": {
+    "N": {
+      "low": "Urea (split doses)",
+      "medium": "Urea split monthly (avoid waterlogging)",
+      "high": "No additional N needed"
+    },
+    "P": {
+      "low": "DAP/SSP basal in pit",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP frequent splits (high K demand)",
+      "medium": "MOP maintenance",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Grapes": {
+    "N": {
+      "low": "Urea (split doses)",
+      "medium": "Urea modest; avoid excess vegetative growth",
+      "high": "No additional N needed"
+    },
+    "P": {
+      "low": "SSP basal",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP split (berry quality)",
+      "medium": "MOP maintenance",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Pomegranate": {
+    "N": {
+      "low": "Urea (split doses)",
+      "medium": "Urea split aligned with flushing",
+      "high": "No additional N needed"
+    },
+    "P": {
+      "low": "SSP basal",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP split (fruit quality)",
+      "medium": "Maintain with MOP",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  },
+  "Mango": {
+    "N": {
+      "low": "Urea (split doses)",
+      "medium": "Urea modest; avoid late N near flowering",
+      "high": "No additional N needed"
+    },
+    "P": {
+      "low": "SSP basal around basin",
+      "medium": "Maintain with SSP",
+      "high": "No additional P needed"
+    },
+    "K": {
+      "low": "MOP (fruit size/quality)",
+      "medium": "Maintain with MOP",
+      "high": "No additional K needed"
+    },
+    "pH": {
+      "acidic": "Apply agricultural lime; avoid excess ammoniacal N",
+      "neutral": "No pH correction needed",
+      "alkaline": "Elemental sulfur or ammonium sulfate; prefer SSP over DAP"
+    }
+  }
+}

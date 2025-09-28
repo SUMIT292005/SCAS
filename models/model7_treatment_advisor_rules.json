@@ -1,0 +1,244 @@
+{
+  "Cotton": {
+    "Bacterial Blight": {
+      "Causal Organism": "Xanthomonas citri pv. malvacearum",
+      "Symptoms": "Angular, dark green, water-soaked lesions on leaves that later turn brown and dry. Black lesions on stems, branches, and bolls. In severe cases, plants show defoliation and boll rot.",
+      "Favorable Conditions": "Warm (25–30°C), humid weather with frequent rainfall and poor field sanitation.",
+      "Chemical": [
+        "Copper Oxychloride 0.3% spray at 10-day interval",
+        "Streptocycline 100 ppm with Copper Oxychloride"
+      ],
+      "Organic": [
+        "Neem oil 3% spray",
+        "Use Pseudomonas fluorescens seed treatment"
+      ],
+      "Cultural": [
+        "Use resistant varieties",
+        "Avoid overhead irrigation",
+        "Destroy infected crop residues",
+        "Ensure crop rotation with non-hosts"
+      ]
+    },
+    "Target Spot/Alternaria": {
+      "Causal Organism": "Alternaria macrospora",
+      "Symptoms": "Circular brown spots with concentric rings on leaves. Severe infection leads to premature defoliation. Boll infection causes poor lint quality.",
+      "Favorable Conditions": "Warm, moist climate with prolonged leaf wetness.",
+      "Chemical": [
+        "Mancozeb 0.25% spray every 7–10 days",
+        "Chlorothalonil 0.2% spray"
+      ],
+      "Organic": [
+        "Neem seed kernel extract (5%) spray",
+        "Trichoderma foliar application"
+      ],
+      "Cultural": [
+        "Practice crop rotation",
+        "Destroy crop residues",
+        "Provide good field drainage",
+        "Maintain wider spacing to improve aeration"
+      ]
+    },
+    "Powdery Mildew": {
+      "Causal Organism": "Leveillula taurica",
+      "Symptoms": "White powdery growth on lower leaf surfaces, yellow patches on upper surface. Severe cases cause premature leaf drop and reduced boll setting.",
+      "Favorable Conditions": "Cool and dry conditions with high humidity during night.",
+      "Chemical": [
+        "Sulphur WP 0.2% spray",
+        "Hexaconazole 0.1% spray"
+      ],
+      "Organic": [
+        "Spray cow milk solution (10%) weekly",
+        "Neem oil 3% spray"
+      ],
+      "Cultural": [
+        "Avoid excess nitrogen fertilizer",
+        "Maintain plant spacing for aeration",
+        "Remove infected leaves early"
+      ]
+    },
+    "Curl Virus": {
+      "Causal Organism": "Cotton Leaf Curl Virus (CLCuV), transmitted by whitefly (Bemisia tabaci)",
+      "Symptoms": "Upward curling of leaves, vein thickening, stunted growth, and poor boll development.",
+      "Favorable Conditions": "High whitefly population, warm and dry climate.",
+      "Chemical": [
+        "Imidacloprid 0.05% foliar spray",
+        "Thiamethoxam 0.05% spray to control whitefly vector"
+      ],
+      "Organic": [
+        "Neem oil 3% spray against whitefly",
+        "Yellow sticky traps for vector monitoring"
+      ],
+      "Cultural": [
+        "Use virus-resistant cotton hybrids",
+        "Rogue out infected plants early",
+        "Manage weeds (alternate hosts)",
+        "Avoid continuous cotton cultivation in the same field"
+      ]
+    },
+    "Healthy": {
+      "Message": "No treatment required. Maintain balanced fertilization and regular field monitoring. Encourage natural enemies like ladybird beetles for whitefly control."
+    }
+  },
+
+  "Tomato": {
+    "Early Blight": {
+      "Causal Organism": "Alternaria solani",
+      "Symptoms": "Dark concentric rings on older leaves, progressing to yellowing and defoliation. Spots may also appear on stems and fruits.",
+      "Favorable Conditions": "Warm temperatures (25–30°C), high humidity, and prolonged leaf wetness.",
+      "Chemical": [
+        "Mancozeb 0.25% spray every 7–10 days",
+        "Chlorothalonil 0.2% spray",
+        "Azoxystrobin 0.1% spray"
+      ],
+      "Organic": [
+        "Neem oil 3% spray",
+        "Trichoderma seed treatment or foliar spray"
+      ],
+      "Cultural": [
+        "Stake plants for better aeration",
+        "Remove and destroy infected leaves",
+        "Rotate with non-host crops",
+        "Use drip irrigation to avoid leaf wetness"
+      ]
+    },
+    "Late Blight": {
+      "Causal Organism": "Phytophthora infestans",
+      "Symptoms": "Irregular water-soaked lesions on leaves that turn brown and spread rapidly. White fungal growth on undersides of leaves. Fruits show firm, brown rot.",
+      "Favorable Conditions": "Cool (18–22°C), humid conditions with frequent rains.",
+      "Chemical": [
+        "Metalaxyl + Mancozeb (0.25%) spray",
+        "Copper Oxychloride 0.3% spray"
+      ],
+      "Organic": [
+        "Neem seed kernel extract 5% spray",
+        "Use biocontrol: Pseudomonas fluorescens"
+      ],
+      "Cultural": [
+        "Avoid waterlogging",
+        "Use resistant varieties",
+        "Destroy infected crop residues",
+        "Improve drainage in the field"
+      ]
+    },
+    "Leaf Curl Virus": {
+      "Causal Organism": "Tomato Leaf Curl Virus (ToLCV), transmitted by whitefly",
+      "Symptoms": "Upward curling of leaves, reduced leaf size, bushy stunted growth, poor flowering, and fruiting.",
+      "Favorable Conditions": "High whitefly population, dry weather.",
+      "Chemical": [
+        "Imidacloprid 0.05% spray for vector control",
+        "Thiamethoxam 0.05% spray"
+      ],
+      "Organic": [
+        "Neem oil 3% spray against whitefly",
+        "Sticky traps for vector monitoring"
+      ],
+      "Cultural": [
+        "Remove infected plants early",
+        "Use virus-tolerant varieties",
+        "Manage weeds (alternate hosts)",
+        "Install yellow sticky traps"
+      ]
+    },
+    "Mosaic Virus": {
+      "Causal Organism": "Tomato Mosaic Virus (ToMV) or Tobacco Mosaic Virus (TMV)",
+      "Symptoms": "Mottled, light and dark green mosaic on leaves, leaf distortion, stunted growth, reduced fruit set.",
+      "Favorable Conditions": "Mechanical transmission via handling, high aphid population.",
+      "Chemical": [
+        "No direct chemical cure; control aphids using Dimethoate 0.05% spray"
+      ],
+      "Organic": [
+        "Neem oil 3% spray against aphids",
+        "Use barrier crops like maize/sorghum"
+      ],
+      "Cultural": [
+        "Rogue out infected plants",
+        "Avoid tobacco use by handlers (TMV risk)",
+        "Use resistant varieties",
+        "Disinfect tools before handling plants"
+      ]
+    },
+    "Septoria": {
+      "Causal Organism": "Septoria lycopersici",
+      "Symptoms": "Small, circular, water-soaked lesions on older leaves with dark brown margins and grey centers, leading to leaf drop.",
+      "Favorable Conditions": "Warm and humid weather with frequent rains.",
+      "Chemical": [
+        "Mancozeb 0.25% spray",
+        "Chlorothalonil 0.2% spray"
+      ],
+      "Organic": [
+        "Neem seed kernel extract (5%) spray",
+        "Trichoderma foliar spray"
+      ],
+      "Cultural": [
+        "Remove lower infected leaves",
+        "Provide proper field sanitation",
+        "Avoid overhead irrigation",
+        "Practice crop rotation"
+      ]
+    },
+    "Healthy": {
+      "Message": "No treatment required. Maintain balanced fertilization, mulching, and regular field monitoring. Ensure crop rotation and integrated pest management."
+    }
+  },
+
+  "Maize": {
+    "Northern Leaf Blight": {
+      "Causal Organism": "Exserohilum turcicum",
+      "Symptoms": "Long, elliptical grey-green lesions on leaves that turn tan with age. Severe infection reduces photosynthesis and grain filling.",
+      "Favorable Conditions": "Moderate temperatures (18–27°C) with prolonged leaf wetness.",
+      "Chemical": [
+        "Mancozeb 0.25% spray",
+        "Propiconazole 0.1% spray"
+      ],
+      "Organic": [
+        "Neem oil 3% spray",
+        "Use Trichoderma foliar spray"
+      ],
+      "Cultural": [
+        "Plant resistant hybrids",
+        "Crop rotation with non-host crops",
+        "Avoid dense planting",
+        "Ensure proper nutrient management"
+      ]
+    },
+    "Common Rust": {
+      "Causal Organism": "Puccinia sorghi",
+      "Symptoms": "Small, cinnamon-brown pustules on both leaf surfaces. Severe cases reduce photosynthesis and yield.",
+      "Favorable Conditions": "Cool, humid weather with cloudy days.",
+      "Chemical": [
+        "Propiconazole 0.1% spray",
+        "Tebuconazole 0.1% spray"
+      ],
+      "Organic": [
+        "Neem oil 3% spray"
+      ],
+      "Cultural": [
+        "Plant resistant maize hybrids",
+        "Avoid late sowing",
+        "Destroy crop debris",
+        "Maintain crop rotation"
+      ]
+    },
+    "Gray Leaf Spot": {
+      "Causal Organism": "Cercospora zeae-maydis",
+      "Symptoms": "Narrow rectangular grey to tan lesions between leaf veins, leading to premature senescence.",
+      "Favorable Conditions": "Warm, humid weather with extended leaf wetness.",
+      "Chemical": [
+        "Mancozeb 0.25% spray",
+        "Azoxystrobin 0.1% spray"
+      ],
+      "Organic": [
+        "Neem oil 3% spray"
+      ],
+      "Cultural": [
+        "Rotate maize with legumes",
+        "Destroy infected residues",
+        "Ensure good field aeration",
+        "Avoid monocropping"
+      ]
+    },
+    "Healthy": {
+      "Message": "No treatment required. Monitor fields regularly and follow integrated nutrient management. Encourage beneficial insects and adopt crop rotation."
+    }
+  }
+}

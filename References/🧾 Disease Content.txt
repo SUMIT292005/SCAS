@@ -1,0 +1,99 @@
+🧾 Disease Classes to Include
+🌿 Cotton (Maharashtra: Vidarbha, Marathwada)
+
+Major cotton diseases in Maharashtra (and covered in open datasets):
+
+Bacterial Blight (Xanthomonas campestris)
+
+Alternaria Leaf Spot / Target Spot (Alternaria macrospora)
+
+Powdery Mildew (Leveillula taurica)
+
+Curl Virus (CLCuV)
+
+Aphid/Armyworm Damage (insect-related, often included in Kaggle datasets)
+
+Healthy Cotton Leaf
+
+➡️ Suggested: Pick 4–5 major classes (Blight, Target Spot, Powdery Mildew, Curl Virus, Healthy).
+
+🍅 Tomato (one of the richest PlantVillage crops)
+
+Available & common tomato leaf diseases:
+
+Early Blight (Alternaria solani)
+
+Late Blight (Phytophthora infestans)
+
+Septoria Leaf Spot (Septoria lycopersici)
+
+Leaf Mold (Fulvia fulva)
+
+Bacterial Spot (Xanthomonas spp.)
+
+Tomato Yellow Leaf Curl Virus (TYLCV)
+
+Tomato Mosaic Virus (ToMV)
+
+Healthy Tomato Leaf
+
+➡️ Suggested: Pick 5–6 classes (Early Blight, Late Blight, Leaf Curl Virus, Mosaic Virus, Septoria, Healthy).
+
+🌱 Soybean (Maharashtra: Marathwada, Vidarbha)
+
+Common diseases (PlantVillage + ICAR datasets):
+
+Rust (Phakopsora pachyrhizi)
+
+Bacterial Pustule (Xanthomonas axonopodis)
+
+Downy Mildew (Peronospora manshurica)
+
+Brown Spot (Septoria glycines)
+
+Healthy Soybean Leaf
+
+➡️ Suggested: Pick 3–4 classes (Rust, Bacterial Pustule, Downy Mildew, Healthy).
+
+🌽 Maize (Corn)
+
+PlantVillage & Kaggle datasets generally include:
+
+Northern Leaf Blight (NLB) (Exserohilum turcicum)
+
+Common Rust (CR) (Puccinia sorghi)
+
+Gray Leaf Spot (GLS) (Cercospora zeae-maydis)
+
+Healthy Maize Leaf
+
+➡️ Suggested: Keep 4 classes (NLB, Rust, GLS, Healthy).
+
+✅ Final Recommendation (Balanced + Available in Datasets)
+
+Cotton → Bacterial Blight, Target Spot/Alternaria, Powdery Mildew, Curl Virus, Healthy
+
+Tomato → Early Blight, Late Blight, Leaf Curl Virus, Mosaic Virus, Septoria, Healthy
+
+Soybean → Rust, Bacterial Pustule, Downy Mildew, Healthy
+
+Maize → Northern Leaf Blight, Common Rust, Gray Leaf Spot, Healthy
+
+👉 That’s around 17–18 classes total, well within CNN capacity.
+
+
+
+
+
+dataset links:
+
+cotton:
+https://www.kaggle.com/datasets/dhamur/cotton-plant-disease/data
+https://data.mendeley.com/datasets/b3jy2p6k8w/2
+
+tomato:
+https://data.mendeley.com/datasets/zfv4jj7855/1
+https://zenodo.org/records/8311631?utm_source=chatgpt.com (not used)
+
+Soybean:
+https://datadryad.org/dataset/doi%3A10.5061/dryad.41ns1rnj3?utm_source=chatgpt.com

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Smart Crop Advisory{% endblock %}</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome for icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-dark: #0a0f1c;
+      --secondary-dark: #1a1f35;
+      --accent-green: #00ff7f;
+      --accent-blue: #00d4ff;
+      --text-light: #e0e6ed;
+      --glow-green: 0 0 10px #00ff7f, 0 0 20px #00ff7f, 0 0 30px #00ff7f;
+      --glow-blue: 0 0 10px #00d4ff, 0 0 20px #00d4ff, 0 0 30px #00d4ff;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+      color: var(--text-light);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    /* Animated Background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 80%, rgba(0, 255, 127, 0.1) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+      z-index: -1;
+      animation: backgroundShift 10s ease-in-out infinite alternate;
+    }
+    
+    @keyframes backgroundShift {
+      0% { transform: translateX(-10px) translateY(-10px); }
+      100% { transform: translateX(10px) translateY(10px); }
+    }
+    
+    /* Custom Navbar */
+    .custom-navbar {
+      background: rgba(26, 31, 53, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid var(--accent-green);
+      padding: 15px 0;
+      position: relative;
+      z-index: 1000;
+    }
+    
+    .navbar-brand {
+      color: var(--accent-green) !important;
+      font-weight: bold;
+      font-size: 1.5rem;
+      text-shadow: var(--glow-green);
+      transition: all 0.3s ease;
+    }
+    
+    .navbar-brand:hover {
+      transform: scale(1.05);
+      text-shadow: var(--glow-green), 0 0 40px #00ff7f;
+    }
+    
+    /* Hamburger Menu Button */
+    .menu-toggle {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1100;
+      background: var(--accent-green);
+      border: none;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--glow-green);
+    }
+    
+    .menu-toggle:hover {
+      transform: scale(1.1);
+      box-shadow: var(--glow-green), 0 0 40px #00ff7f;
+    }
+    
+    .menu-toggle i {
+      color: var(--primary-dark);
+      font-size: 20px;
+    }
+    
+    /* Slide-out Menu */
+    .slide-menu {
+      position: fixed;
+      top: 0;
+      left: -350px;
+      width: 350px;
+      height: 100vh;
+      background: linear-gradient(135deg, rgba(26, 31, 53, 0.95), rgba(10, 15, 28, 0.95));
+      backdrop-filter: blur(20px);
+      z-index: 1050;
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      border-right: 2px solid var(--accent-green);
+      box-shadow: 0 0 30px rgba(0, 255, 127, 0.3);
+      padding-top: 80px;
+    }
+    
+    .slide-menu.active {
+      left: 0;
+    }
+    
+    .menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1040;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .menu-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .menu-items {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .menu-item {
+      margin: 0;
+      border-bottom: 1px solid rgba(0, 255, 127, 0.2);
+    }
+    
+    .menu-item:last-child {
+      border-bottom: none;
+    }
+    
+    .menu-link {
+      display: block;
+      padding: 20px 30px;
+      color: var(--text-light);
+      text-decoration: none;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .menu-link::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 127, 0.2), transparent);
+      transition: all 0.5s ease;
+    }
+    
+    .menu-link:hover::before {
+      left: 100%;
+    }
+    
+    .menu-link:hover {
+      color: var(--accent-green);
+      text-shadow: 0 0 10px var(--accent-green);
+      transform: translateX(10px);
+    }
+    
+    .menu-link i {
+      margin-right: 15px;
+      width: 20px;
+      text-align: center;
+    }
+    
+    /* Content Container */
+    .main-content {
+      padding-top: 20px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* Button Styles */
+    .btn-custom {
+      background: linear-gradient(45deg, var(--accent-green), var(--accent-blue));
+      border: none;
+      color: var(--primary-dark);
+      font-weight: bold;
+      border-radius: 25px;
+      padding: 12px 30px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 255, 127, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-custom::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: all 0.5s ease;
+    }
+    
+    .btn-custom:hover::before {
+      left: 100%;
+    }
+    
+    .btn-custom:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 255, 127, 0.5);
+    }
+    
+    /* Card Styles */
+    .custom-card {
+      background: rgba(26, 31, 53, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 255, 127, 0.3);
+      border-radius: 15px;
+      transition: all 0.3s ease;
+    }
+    
+    .custom-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent-green);
+      box-shadow: 0 10px 30px rgba(0, 255, 127, 0.2);
+    }
+    
+    /* Form Styles */
+    .form-control, .form-select {
+      background: rgba(26, 31, 53, 0.8);
+      border: 1px solid rgba(0, 255, 127, 0.3);
+      color: var(--text-light);
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      background: rgba(26, 31, 53, 0.9);
+      border-color: var(--accent-green);
+      box-shadow: 0 0 15px rgba(0, 255, 127, 0.3);
+      color: var(--text-light);
+    }
+    
+    .form-control::placeholder {
+      color: rgba(224, 230, 237, 0.6);
+    }
+    
+    /* Animation Classes */
+    .fade-in {
+      animation: fadeIn 0.8s ease-in;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .slide-in-left {
+      animation: slideInLeft 0.6s ease-out;
+    }
+    
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .slide-menu {
+        width: 100%;
+        left: -100%;
+      }
+      
+      .slide-menu.active {
+        left: 0;
+      }
+    }
+  </style>
+  
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <!-- Hamburger Menu Button -->
+  <button class="menu-toggle" id="menuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+  
+  <!-- Slide-out Menu -->
+  <div class="menu-overlay" id="menuOverlay"></div>
+  <nav class="slide-menu" id="slideMenu">
+    <ul class="menu-items">
+      <li class="menu-item">
+        <a href="/crop_recommendation" class="menu-link">
+          <i class="fas fa-seedling"></i> Crop Recommendation
+        </a>
+      </li>
+      <li class="menu-item">
+        <a href="/yield_prediction" class="menu-link">
+          <i class="fas fa-chart-line"></i> Yield Prediction
+        </a>
+      </li>
+      <li class="menu-item">
+        <a href="/profit_pest_estimation" class="menu-link">
+          <i class="fas fa-dollar-sign"></i> Profit Estimation & Pest Risk
+        </a>
+      </li>
+      <li class="menu-item">
+        <a href="/fertilizer_advisor" class="menu-link">
+          <i class="fas fa-flask"></i> Fertilizer Advisor
+        </a>
+      </li>
+      <li class="menu-item">
+        <a href="/disease_detector" class="menu-link">
+          <i class="fas fa-microscope"></i> Disease Detector
+        </a>
+      </li>
+      <li class="menu-item">
+        <a href="/treatment_advisor" class="menu-link">
+          <i class="fas fa-pills"></i> Treatment Advisor
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Main Navbar -->
+  <nav class="navbar navbar-expand-lg custom-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="/">🌱 Smart Crop Advisory</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container main-content">
+    {% block content %}{% endblock %}
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // Menu Toggle Functionality
+    const menuToggle = document.getElementById('menuToggle');
+    const slideMenu = document.getElementById('slideMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const menuToggleIcon = menuToggle.querySelector('i');
+    
+    function toggleMenu() {
+      slideMenu.classList.toggle('active');
+      menuOverlay.classList.toggle('active');
+      
+      if (slideMenu.classList.contains('active')) {
+        menuToggleIcon.classList.remove('fa-bars');
+        menuToggleIcon.classList.add('fa-times');
+      } else {
+        menuToggleIcon.classList.remove('fa-times');
+        menuToggleIcon.classList.add('fa-bars');
+      }
+    }
+    
+    menuToggle.addEventListener('click', toggleMenu);
+    menuOverlay.addEventListener('click', toggleMenu);
+    
+    // Close menu when clicking on a menu link
+    document.querySelectorAll('.menu-link').forEach(link => {
+      link.addEventListener('click', () => {
+        slideMenu.classList.remove('active');
+        menuOverlay.classList.remove('active');
+        menuToggleIcon.classList.remove('fa-times');
+        menuToggleIcon.classList.add('fa-bars');
+      });
+    });
+    
+    // Add fade-in animation to content
+    document.addEventListener('DOMContentLoaded', function() {
+      const content = document.querySelector('.main-content');
+      content.classList.add('fade-in');
+    });
+    
+    // Close menu on escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && slideMenu.classList.contains('active')) {
+        toggleMenu();
+      }
+    });
+  </script>
+  
+  {% block scripts %}{% endblock %}
+</body>
+</html>

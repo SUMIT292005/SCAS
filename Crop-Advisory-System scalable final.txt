@@ -1,0 +1,357 @@
+Crop-Advisory-System/
+│
+├── 📁 data/
+│   ├── 📁 raw/
+│   │   ├── crop_recommendation.csv
+│   │   ├── plantvillage_images/          # Contains folders of each crop's leaf images
+│   │   ├── agcensus_maharashtra.csv
+│   │   ├── soil_health_maharashtra.csv
+│   │   ├── market_prices.csv
+│   │   └── pest_rules.csv (optional)
+│   │
+│   ├── 📁 processed/
+│   │   ├── filtered_crops.csv
+│   │   ├── cleaned_yield_data.csv
+│   │   └── final_crop_dataset.csv
+│   │   └── average_data.xlsx
+│   │
+│   │
+│   └── 📁 external_api/
+│       ├── weather_api_response_samples.json
+│       └── soil_api_response_samples.json
+│
+├── 📁 models/
+│   ├── model1_crop_recommender.pkl
+│   ├── cotton_disease_model.h5
+│   ├── tomato_disease_model.h5
+│   ├── soybean_disease_model.h5
+│   ├── maize_disease_model.h5
+│   ├── model3_yield_predictor.pkl
+│   ├── model4_fertilizer_advisor_rules.json
+│   ├── model5_profit_predictor.pkl
+│   └── model6_pest_risk_predictor.pkl
+│
+├── 📁 notebooks/
+│   ├── 01_crop_recommender.ipynb
+│   ├── 02_disease_detector_CNN.ipynb
+│   ├── 03_yield_predictor.ipynb
+│   ├── 04_fertilizer_recommender.ipynb
+│   ├── 05_profit_predictor.ipynb
+│   └── 06_pest_risk_model.ipynb
+│
+├── 📁 utils/
+│   ├── _init_.py
+│   ├── model_helpers.py
+│   ├── api_weather.py
+│   └── fertilizer_rules.py
+│
+├── 📁 web_app/
+│   ├── 📁 static/
+│   │   ├── css/
+│   │   ├── js/
+│   │   └── images/
+│   ├── 📁 templates/
+│   │   ├── base.html                  # Common layout (header/nav/footer)
+│   │   ├── index.html                 # Homepage → buttons to go to each module
+│   │   ├── crop_recommendation.html   # STEP 1 page
+│   │   ├── yield_prediction.html      # STEP 2 page
+│   │   ├── profit_estimation.html     # STEP 3 page
+│   │   ├── fertilizer_advisor.html    # STEP 4 page
+│   │   ├── pest_risk.html             # STEP 5 page
+│   │   ├── disease_detector.html      # STEP 6 page
+│   │   ├── treatment_advisor.html     # STEP 7 page
+│   │   └── dashboard.html    
+│   ├── app.py                  # Flask or FastAPI main file
+│   └── dashboard_helpers.py
+│   ├── routes/                        # Modular route handlers
+│      ├── crop_routes.py
+│      ├── yield_routes.py
+│      ├── profit_routes.py
+│      ├── fertilizer_routes.py
+│      ├── pest_routes.py
+│      ├── disease_routes.py
+│      ├── treatment_routes.py
+│      └── __init__.py  
+│
+├── requirements.txt
+├── README.md
+└── .gitignore
+
+
+🌾 FINAL SMART CROP ADVISORY SYSTEM – DEVELOPMENT PLAN (Updated)
+
+🔄 Iterative | 📦 Modular | 📁 File-Wise | 🌐 Web-Integrated | 🧹 In-Notebook Data Cleaning
+
+🟩 STEP 0: Initial Setup (One-Time)
+
+Tasks:
+
+Create folders & conda/venv environment
+
+Install dependencies via requirements.txt
+
+Create .env for API keys
+
+Test basic Weather API call
+
+📁 Files Created or Modified:
+
+requirements.txt
+
+.env (API keys: OpenWeatherMap, Soil API, etc.)
+
+web_app/app.py → main Flask entry, registers all blueprints
+
+web_app/routes/__init__.py → register routes here
+
+web_app/routes/crop_routes.py → test first route
+
+utils/api_weather.py → function to fetch weather
+
+🔷 STEP 1: Model 1 – Crop Recommender
+
+Goal: Recommend top crops using soil + live weather
+Data: data/raw/crop_recommendation.csv
+
+✅ 1A. Model Development
+
+Input: N, P, K, pH + temperature, humidity, rainfall
+
+Output: Top 2–3 crops
+
+Cleaning: inside 01_crop_recommender.ipynb
+
+📁 Files:
+
+notebooks/01_crop_recommender.ipynb
+
+models/model1_crop_recommender.pkl
+
+data/raw/crop_recommendation.csv
+
+✅ 1B. Web Integration
+
+Inputs: N, P, K, pH + location → weather API
+Output: Crop list (with optional images)
+
+📁 Web Files:
+
+web_app/templates/crop_recommendation.html → form + results
+
+web_app/routes/crop_routes.py → /recommend_crop route
+
+utils/api_weather.py → get_weather(location)
+
+utils/model_helpers.py → load_model1_crop_recommender()
+
+🔷 STEP 2: Model 3 – Yield Predictor
+
+Goal: Predict expected yield
+Data: data/raw/agcensus_maharashtra.csv
+
+✅ 2A. Model Development
+
+Input: Crop, NPK, pH, weather, optional disease
+
+Output: Yield prediction (tons/ha)
+
+Cleaning: inside 03_yield_predictor.ipynb
+
+📁 Files:
+
+notebooks/03_yield_predictor.ipynb
+
+models/model3_yield_predictor.pkl
+
+data/raw/agcensus_maharashtra.csv
+
+✅ 2B. Web Integration
+
+Inputs: Crop (from M1) + soil + weather
+Output: Yield estimate
+
+📁 Web Files:
+
+web_app/templates/yield_prediction.html
+
+web_app/routes/yield_routes.py → /predict_yield
+
+web_app/dashboard_helpers.py → predict_yield()
+
+🔷 STEP 3: Model 5 – Profit Predictor
+
+Goal: Estimate profit
+Data: data/raw/market_prices.csv
+
+✅ 3A. Model Development
+
+Input: Yield + price
+
+Output: Revenue = yield × price
+
+Notebook: 05_profit_predictor.ipynb
+
+📁 Files:
+
+notebooks/05_profit_predictor.ipynb
+
+models/model5_profit_predictor.pkl (optional, logic-only works too)
+
+data/raw/market_prices.csv
+
+✅ 3B. Web Integration
+
+Inputs: Yield (from M2) + price (API or manual)
+Output: Profit ₹
+
+📁 Web Files:
+
+web_app/templates/profit_estimation.html
+
+web_app/routes/profit_routes.py → /predict_profit
+
+web_app/dashboard_helpers.py → calculate_profit()
+
+🔷 STEP 4: Model 4a – Fertilizer Advisor (Growth)
+
+Goal: Suggest fertilizers for healthy growth
+Data: models/model4_fertilizer_advisor_rules.json
+
+✅ 4A. Rule Logic
+
+Input: Crop + NPK + pH
+
+Output: Fertilizer suggestion
+
+📁 Files:
+
+utils/fertilizer_rules.py → get_growth_fertilizer()
+
+models/model4_fertilizer_advisor_rules.json
+
+✅ 4B. Web Integration
+
+Inputs: Crop + soil info
+Output: Fertilizer list
+
+📁 Web Files:
+
+web_app/templates/fertilizer_advisor.html
+
+web_app/routes/fertilizer_routes.py → /suggest_fertilizer
+
+web_app/dashboard_helpers.py → suggest_growth_fertilizer()
+
+🔷 STEP 5: Model 6 – Pest Risk Predictor
+
+Goal: Warn about pest risk
+Data: data/raw/pest_rules.csv
+
+✅ 5A. Rule Logic
+
+Input: Weather + crop
+
+Output: Pest risk level (Low/Med/High)
+
+📁 Files:
+
+notebooks/06_pest_risk_model.ipynb
+
+models/model6_pest_risk_predictor.pkl (or rules only)
+
+data/raw/pest_rules.csv
+
+✅ 5B. Web Integration
+
+Inputs: Crop + weather
+Output: Color-coded risk level
+
+📁 Web Files:
+
+web_app/templates/pest_risk.html
+
+web_app/routes/pest_routes.py → /predict_pest_risk
+
+web_app/dashboard_helpers.py → predict_pest_risk()
+
+🔴 STEP 6: Model 2 – Disease Detector (CNN)
+
+Goal: Detect plant diseases from image
+Data: data/raw/plantvillage_images/
+
+✅ 6A. Model Development
+
+Input: Leaf image
+
+Output: Disease class / Healthy
+
+Notebook: 02_disease_detector_CNN.ipynb
+
+📁 Files:
+
+notebooks/02_disease_detector_CNN.ipynb
+
+models/model2_disease_detector.h5
+
+data/raw/plantvillage_images/
+
+✅ 6B. Web Integration
+
+Inputs: Upload image
+Output: Predicted disease
+
+📁 Web Files:
+
+web_app/templates/disease_detector.html
+
+web_app/routes/disease_routes.py → /detect_disease
+
+web_app/dashboard_helpers.py → detect_disease_from_image()
+
+🔴 STEP 7: Model 4b – Treatment Advisor
+
+Goal: Suggest treatment (fertilizer/pesticide/fungicide)
+Data: Extended rules in model4_fertilizer_advisor_rules.json
+
+✅ 7A. Rule Logic
+
+Input: Disease + crop
+
+Output: Treatment recommendation
+
+📁 Files:
+
+utils/fertilizer_rules.py → get_treatment_fertilizer()
+
+models/model4_fertilizer_advisor_rules.json (extended)
+
+✅ 7B. Web Integration
+
+Inputs: Detected disease
+Output: Suggested treatment
+
+📁 Web Files:
+
+web_app/templates/treatment_advisor.html
+
+web_app/routes/treatment_routes.py → /recommend_treatment
+
+web_app/dashboard_helpers.py → recommend_treatment()
+
+✅ FINAL POLISH & DEPLOY
+
+UI Finishing:
+
+base.html → navbar, footer
+
+Add Bootstrap tabs/cards
+
+Loading spinners & validation
+
+Deployment:
+
+Test entire flow
+
+Push to GitHub
+
+Deploy on Render / Railway

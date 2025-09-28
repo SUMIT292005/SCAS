@@ -1,0 +1,303 @@
+District Name,Market Name,Commodity,Variety,Grade,Min Price (Rs./Quintal),Max Price (Rs./Quintal),Modal Price (Rs./Quintal)
+Sholapur,Akluj,Onion,Other,Local,200,1600,900
+Akola,Akola,Onion,Other,Local,700,1700,1300
+Akola,Akola,Onion,Other,Local,700,1800,1400
+Ahmednagar,Akole,Onion,Other,Local,150,1811,1000
+Amarawati,Amrawati(Frui & Veg. Market),Onion,Local,Local,700,2500,1600
+Amarawati,Amrawati(Frui & Veg. Market),Onion,Local,Local,800,2600,1700
+Jalgaon,Bhusaval,Onion,Other,Local,1000,1500,1300
+Chandrapur,Chandrapur(Ganjwad),Onion,Other,Local,2000,3200,2800
+Nashik,Chandvad,Onion,Other,Local,453,1580,1380
+Chattrapati Sambhajinagar,Chattrapati Sambhajinagar,Onion,Other,Local,300,1300,800
+Chattrapati Sambhajinagar,Chattrapati Sambhajinagar,Onion,Other,Local,300,1400,850
+Nashik,Devala,Onion,Other,Local,300,1470,1200
+Dhule,Dhule,Onion,Red,Local,500,1310,1200
+Nagpur,Hingna,Onion,Red,Local,2000,2200,2100
+Nagpur,Hingna,Onion,Red,Local,2000,2200,2100
+Pune,Indapur,Onion,Red,Local,200,1800,1000
+Jalgaon,Jalgaon,Onion,Red,Local,550,1300,960
+Ahmednagar,Jamkhed,Onion,Local,Local,200,1700,950
+Nashik,Kalvan,Onion,Other,Local,450,1900,1200
+Nagpur,Kamthi,Onion,Local,Local,1520,2020,1770
+Satara,Karad,Onion,Other,Local,1000,1600,1600
+Ahmednagar,Karjat,Onion,Local,Local,200,1500,900
+Ahmednagar,Karjat,Onion,Local,Local,200,1500,900
+Pune,Khed(Chakan),Onion,Other,Local,800,1600,1300
+Pune,Khed(Chakan),Onion,Other,Local,1000,1600,1300
+Kolhapur,Kolhapur,Onion,Other,Local,500,1900,1000
+Ahmednagar,Kopargaon,Onion,Other,Local,400,1541,1200
+Nashik,Lasalgaon,Onion,Other,Local,600,1900,1500
+Nashik,Lasalgaon(Niphad),Onion,Other,Local,600,1601,1370
+Nashik,Lasalgaon(Vinchur),Onion,Other,Local,600,1670,1370
+Nashik,Lasalgaon(Vinchur),Onion,Other,Local,600,1716,1450
+Chattrapati Sambhajinagar,Lasur Station,Onion,Other,Local,100,1540,925
+Sholapur,Laxmi Sopan Agriculture Produce Marketing Co Ltd,Onion,Other,Local,600,1300,900
+Sholapur,Laxmi Sopan Agriculture Produce Marketing Co Ltd,Onion,Other,Local,600,1700,1200
+Buldhana,Malkapur,Onion,Local,Local,525,1200,800
+Sholapur,Mangal Wedha,Onion,Local,Local,100,1600,1400
+Nashik,Manmad,Onion,Other,Local,300,1491,1350
+Nagpur,Nagpur,Onion,Red,Local,1000,1800,1600
+Nagpur,Nagpur,Onion,White,Local,1500,2000,1875
+Nashik,Nampur,Onion,Other,Local,400,1435,1250
+Nashik,Nasik,Onion,Other,Local,350,1551,1100
+Ahmednagar,Om Chaitanya Multistate Agro Purpose CoOp Society ,Onion,Other,Local,200,1800,1100
+Ahmednagar,Pathardi,Onion,Red,Local,200,1500,900
+Nashik,Pimpalgaon,Onion,Other,Local,400,2101,1375
+Nashik,Pimpalgaon Baswant(Saykheda),Onion,Other,Local,700,1701,1200
+Pune,Pune,Onion,Local,Local,500,1650,1075
+Pune,Pune,Onion,Local,Local,600,1800,1200
+Pune,Pune(Khadiki),Onion,Local,Local,700,1400,1050
+Pune,Pune(Khadiki),Onion,Local,Local,700,1600,1150
+Pune,Pune(Manjri),Onion,Local,Local,800,1400,1100
+Pune,Pune(Manjri),Onion,Local,Local,1000,1600,1300
+Pune,Pune(Moshi),Onion,Local,Local,1000,1500,1250
+Pune,Pune(Pimpri),Onion,Local,Local,1300,1500,1400
+Pune,Pune(Pimpri),Onion,Local,Local,1300,1700,1500
+Ahmednagar,Rahata,Onion,Other,Local,600,1700,1100
+Ahmednagar,Rahuri,Onion,Other,Local,100,1710,905
+Dhule,Sakri,Onion,Other,Local,750,1350,1100
+Ahmednagar,Sangamner,Onion,Other,Local,200,1800,1000
+Ahmednagar,Sangamner,Onion,Other,Local,200,1900,1050
+Sangli,"Sangli(Phale, Bhajipura Market)",Onion,Local,Local,500,1800,1150
+Satara,Satara,Onion,Other,Local,1000,2000,1500
+Ahmednagar,Shrirampur,Onion,Other,Local,550,1600,1250
+Nashik,Sinner,Onion,Other,Local,100,1400,1250
+Sholapur,Solapur,Onion,Red,Local,100,2300,1000
+Chattrapati Sambhajinagar,Vaijpur,Onion,Other,Local,300,1427,1200
+Mumbai,Vashi New Mumbai,Onion,Other,Local,1100,1700,1400
+Sholapur,Akluj,Potato,Local,Local,1500,1800,1600
+Akola,Akola,Potato,Other,Local,900,1500,1200
+Akola,Akola,Potato,Other,Local,900,1500,1300
+Amarawati,Amrawati(Frui & Veg. Market),Potato,Local,Local,600,1700,1150
+Amarawati,Amrawati(Frui & Veg. Market),Potato,Local,Local,700,1700,1200
+Jalgaon,Bhusaval,Potato,Other,Local,1400,2000,1700
+Chandrapur,Chandrapur(Ganjwad),Potato,Other,Local,1400,1600,1500
+Chattrapati Sambhajinagar,Chattrapati Sambhajinagar,Potato,Other,Local,1200,1400,1300
+Chattrapati Sambhajinagar,Chattrapati Sambhajinagar,Potato,Other,Local,1300,1500,1400
+Nagpur,Hingna,Potato,Local,Local,1250,2000,1750
+Nagpur,Hingna,Potato,Local,Local,1250,2000,1750
+Jalgaon,Jalgaon,Potato,Other,Local,1000,1400,1200
+Nagpur,Kamthi,Potato,Local,Local,2030,2530,2280
+Pune,Khed(Chakan),Potato,Other,Local,1200,1800,1500
+Pune,Khed(Chakan),Potato,Other,Local,1200,1800,1500
+Nagpur,Nagpur,Potato,Local,Local,1000,1500,1375
+Nashik,Nasik,Potato,Other,Local,1050,1650,1400
+Pune,Pune,Potato,Local,Local,800,2000,1400
+Pune,Pune,Potato,Local,Local,1000,2000,1500
+Pune,Pune(Khadiki),Potato,Local,Local,800,1200,1000
+Pune,Pune(Khadiki),Potato,Local,Local,1000,1300,1150
+Pune,Pune(Manjri),Potato,Other,Local,1000,2000,1500
+Pune,Pune(Manjri),Potato,Other,Local,1500,2500,2000
+Pune,Pune(Moshi),Potato,Local,Local,1000,1400,1200
+Ahmednagar,Rahata,Potato,Other,Local,1000,1400,1200
+Ahmednagar,Rahata,Potato,Other,Local,1100,1400,1250
+Ahmednagar,Rahuri,Potato,Other,Local,1000,2000,1500
+Sangli,"Sangli(Phale, Bhajipura Market)",Potato,Local,Local,1200,1800,1500
+Satara,Satara,Potato,Other,Local,1000,1800,1400
+Ahmednagar,Shrirampur,Potato,Other,Local,1400,1600,1500
+Sholapur,Solapur,Potato,Local,Local,1050,1700,1400
+Mumbai,Vashi New Mumbai,Potato,Other,Local,900,1500,1200
+Sholapur,Akluj,Tomato,Local,Local,1000,1800,1500
+Amarawati,Amrawati(Frui & Veg. Market),Tomato,Local,Local,2000,2600,2300
+Amarawati,Amrawati(Frui & Veg. Market),Tomato,Local,Local,2200,2800,2500
+Jalgaon,Bhusaval,Tomato,Other,Local,2000,3000,2500
+Jalgaon,Bhusaval,Tomato,Other,Local,2500,3500,3000
+Chandrapur,Chandrapur(Ganjwad),Tomato,Other,Local,1600,2400,2000
+Chattrapati Sambhajinagar,Chattrapati Sambhajinagar,Tomato,Other,Local,1200,1500,1350
+Chattrapati Sambhajinagar,Chattrapati Sambhajinagar,Tomato,Other,Local,1200,1800,1500
+Nagpur,Hingna,Tomato,Local,Local,2500,4000,3285
+Nagpur,Hingna,Tomato,Local,Local,3000,3500,3250
+Jalgaon,Jalgaon,Tomato,Other,Local,500,1000,700
+Pune,Junnar(Narayangaon),Tomato,Local,Local,500,1500,1000
+Nagpur,Kalmeshwar,Tomato,Other,Local,2605,3000,2830
+Nagpur,Kalmeshwar,Tomato,Other,Local,3610,4000,3835
+Nagpur,Kamthi,Tomato,Local,Local,4070,4570,4320
+Satara,Karad,Tomato,Other,Local,2000,3000,3000
+Pune,Khed(Chakan),Tomato,Other,Local,1000,1500,1200
+Pune,Khed(Chakan),Tomato,Other,Local,1000,2000,1500
+Kolhapur,Kolhapur,Tomato,Other,Local,500,2000,1300
+Kolhapur,Kolhapur,Tomato,Other,Local,500,2500,1500
+Sholapur,Mangal Wedha,Tomato,Local,Local,200,2500,1200
+Mumbai,Mumbai,Tomato,Other,Local,2400,3000,2700
+Nagpur,Nagpur,Tomato,Local,Local,2000,3500,3150
+Nagpur,Nagpur,Tomato,Other,Local,3500,4000,3875
+Raigad,Panvel,Tomato,Other,Local,2500,3000,2750
+Raigad,Panvel,Tomato,Other,Local,5000,6000,5500
+Satara,Patan,Tomato,Other,Local,1500,2000,1750
+Satara,Patan,Tomato,Other,Local,1500,2000,1750
+Nashik,Pimpalgaon,Tomato,Other,Local,250,2705,1750
+Pune,Pune,Tomato,Local,Local,1000,2000,1500
+Pune,Pune,Tomato,Local,Local,1000,3000,2000
+Pune,Pune(Khadiki),Tomato,Local,Local,1000,2000,1500
+Pune,Pune(Khadiki),Tomato,Local,Local,1100,2000,1550
+Pune,Pune(Manjri),Tomato,Other,Local,1000,2000,1500
+Pune,Pune(Manjri),Tomato,Other,Local,1000,2000,1500
+Pune,Pune(Moshi),Tomato,Local,Local,1000,2000,1500
+Pune,Pune(Pimpri),Tomato,Local,Local,1500,2000,1750
+Ahmednagar,Rahata,Tomato,Other,Local,500,1000,750
+Ahmednagar,Rahata,Tomato,Other,Local,500,1500,1000
+Ahmednagar,Rahuri,Tomato,Other,Local,1500,2500,2000
+Ratnagiri,Ratnagiri (Nachane),Tomato,Other,Local,3000,3200,3100
+Ahmednagar,Sangamner,Tomato,Other,Local,250,1000,625
+Ahmednagar,Sangamner,Tomato,Other,Local,375,2000,1187
+Satara,Satara,Tomato,Other,Local,1000,2000,1500
+Ahmednagar,Shrirampur,Tomato,Other,Local,1500,2500,2000
+Sholapur,Solapur,Tomato,Other,Local,200,1800,1100
+Satara,Vai,Tomato,Local,Local,1000,3000,2000
+Sangli,Vita,Tomato,Other,Local,1500,2500,2000
+Akola,Akola,Wheat,Other,FAQ,2570,2675,2615
+Akola,Akola,Wheat,Other,Non-FAQ,2200,2400,2300
+Jalgaon,Amalner,Wheat,Other,FAQ,2600,2750,2750
+Amarawati,Amarawati,Wheat,Other,FAQ,2800,3000,2900
+Latur,Aurad Shahajani,Wheat,Maharashtra 2189,FAQ,2425,2600,2490
+Latur,Aurad Shahajani,Wheat,Maharashtra 2189,Non-FAQ,2400,2424,2412
+Latur,Ausa,Wheat,Maharashtra 2189,Non-FAQ,2401,2401,2401
+Beed,Beed,Wheat,Other,FAQ,2450,2900,2625
+Bhandara,Bhandara,Wheat,Maharashtra 2189,FAQ,2500,2500,2500
+Jalana,Bhokardan(Pimpalgaon Renu),Wheat,Other,Non-FAQ,2100,2400,2300
+Amarawati,Chandur Railway,Wheat,Other,Non-FAQ,2350,2350,2350
+Jalgaon,Chopada,Wheat,Other,FAQ,2465,2575,2465
+Buldhana,Deoulgaon Raja,Wheat,Other,FAQ,2450,2573,2500
+Nashik,Devala,Wheat,Maharashtra 2189,FAQ,2540,2655,2550
+Dhule,Dhule,Wheat,Other,FAQ,2425,2730,2650
+Sholapur,Dudhani,Wheat,Maharashtra 2189,FAQ,2570,2620,2620
+Sholapur,Dudhani,Wheat,Maharashtra 2189,FAQ,2700,2700,2700
+Chattrapati Sambhajinagar,Gangapur,Wheat,Other,FAQ,2551,2685,2660
+Jalana,Jalana,Wheat,Other,FAQ,2551,2700,2650
+Ahmednagar,Jamkhed,Wheat,Other,FAQ,2450,2700,2575
+Ahmednagar,Karjat,Wheat,Other,FAQ,2500,2800,2500
+Ahmednagar,Karjat,Wheat,Other,FAQ,2500,2800,2500
+Ahmednagar,Karjat,Wheat,Other,Non-FAQ,2200,2200,2200
+Ahmednagar,Karjat,Wheat,Other,Non-FAQ,2200,2200,2200
+Sholapur,Karmala,Wheat,Other,FAQ,2450,2600,2500
+Sholapur,Karmala,Wheat,Other,Non-FAQ,2400,2400,2400
+Beed,Kille Dharur,Wheat,Other,FAQ,2650,2900,2650
+Beed,Kille Dharur,Wheat,Other,Non-FAQ,2400,2400,2400
+Yavatmal,Kisan Market Yard,Wheat,Other,Local,2640,2645,2643
+Ahmednagar,Kopargaon,Wheat,Other,FAQ,2658,2700,2670
+Nashik,Lasalgaon(Niphad),Wheat,Maharashtra 2189,FAQ,2600,2700,2671
+Beed,Majalgaon,Wheat,Other,FAQ,2525,2812,2600
+Nashik,Malegaon,Wheat,Other,FAQ,2611,2814,2673
+Buldhana,Malkapur,Wheat,Other,FAQ,2545,3050,2680
+Vashim,Mangrulpeer,Wheat,Other,FAQ,2650,2765,2700
+Vashim,Manora,Wheat,Other,FAQ,2690,2751,2725
+Buldhana,Mehekar,Wheat,Other,FAQ,2600,2800,2700
+Mumbai,Mumbai,Wheat,Other,FAQ,3000,5800,4150
+Akola,Murtizapur,Wheat,Other,FAQ,2430,2655,2545
+Nagpur,Nagpur,Wheat,Other,FAQ,2500,2716,2662
+Nagpur,Nagpur,Wheat,Sharbati,FAQ,3200,3500,3425
+Ahmednagar,Om Chaitanya Multistate Agro Purpose CoOp Society ,Wheat,Other,Local,2500,2600,2500
+Ahmednagar,Om Chaitanya Multistate Agro Purpose CoOp Society ,Wheat,Other,Local,2600,2600,2600
+Jalgaon,Pachora,Wheat,Other,FAQ,2425,2600,2521
+Jalgaon,Pachora,Wheat,Other,Non-FAQ,2150,2400,2251
+Chattrapati Sambhajinagar,Paithan,Wheat,Bansi,FAQ,2550,2636,2615
+Chattrapati Sambhajinagar,Paithan,Wheat,Bansi,FAQ,2555,2750,2621
+Parbhani,Palam,Wheat,Other,FAQ,2900,2900,2900
+Thane,Palghar,Wheat,Other,FAQ,3400,3400,3400
+Dharashiv(Usmanabad),Paranda,Wheat,Other,Non-FAQ,2400,2400,2400
+Jalana,Partur,Wheat,Maharashtra 2189,FAQ,2450,2600,2476
+Pune,Pune,Wheat,Sharbati,FAQ,4500,5000,4750
+Pune,Pune,Wheat,Sharbati,FAQ,4500,5000,4750
+Ahmednagar,Rahata,Wheat,Other,FAQ,2550,2550,2550
+Ahmednagar,Rahata,Wheat,Other,FAQ,2600,2700,2650
+Ahmednagar,Rahuri(Vambori),Wheat,Other,FAQ,2451,2800,2600
+Ahmednagar,Rahuri(Vambori),Wheat,Other,FAQ,2475,2775,2625
+Ahmednagar,Rahuri(Vambori),Wheat,Other,Non-FAQ,2400,2400,2400
+Ahmednagar,Rahuri(Vambori),Wheat,Other,Non-FAQ,2400,2400,2400
+Sangli,Sangli,Wheat,Other,FAQ,3500,4500,4000
+Nagpur,Savner,Wheat,Other,FAQ,2657,2657,2657
+Nandurbar,Shahada,Wheat,Other,FAQ,2551,3150,2700
+Ahmednagar,Shevgaon,Wheat,Maharashtra 2189,FAQ,2500,2700,2700
+Ahmednagar,Shevgaon(Bodhegaon),Wheat,Maharashtra 2189,FAQ,2600,2700,2600
+Ahmednagar,Shevgaon(Bodhegaon),Wheat,Maharashtra 2189,FAQ,2600,2700,2600
+Dhule,Shirpur,Wheat,Other,FAQ,2756,2756,2756
+Dhule,Shirpur,Wheat,Other,Non-FAQ,1700,2251,2251
+Chattrapati Sambhajinagar,Sillod,Wheat,Other,FAQ,2550,2700,2600
+Buldhana,Sindkhed Raja,Wheat,Maharashtra 2189,Non-FAQ,2000,2200,2100
+Sholapur,Solapur,Wheat,Sharbati,FAQ,2675,3440,3355
+Sangli,Tasgaon,Wheat,Other,FAQ,2870,3370,3140
+Thane,Ulhasnagar,Wheat,Other,FAQ,3200,3600,3400
+Dharashiv(Usmanabad),Umarga,Wheat,Maharashtra 2189,FAQ,3060,3060,3060
+Wardha,Wardha,Wheat,Other,FAQ,2635,2660,2650
+Yavatmal,Yeotmal,Wheat,Other,FAQ,2450,2640,2545
+Raigad,Alibagh,Rice,Other,Local,2500,2700,2600
+Raigad,Alibagh,Rice,Other,Local,2500,2700,2600
+Raigad,Mangaon,Rice,Other,Local,1900,4800,3500
+Raigad,Mangaon,Rice,Other,Local,1900,4800,3800
+Raigad,Murud,Rice,Other,Local,2500,2700,2600
+Raigad,Murud,Rice,Other,Local,2500,2700,2600
+Thane,Palghar,Rice,1009 Kar,Local,4550,4550,4550
+Thane,Palghar,Rice,1009 Kar,Local,4950,4950,4950
+Sangli,Sangli,Rice,Other,Local,4500,9000,6750
+Sholapur,Solapur,Rice,Other,Local,3360,7130,3955
+Thane,Ulhasnagar,Rice,Other,Local,3500,5500,4500
+Thane,Vasai,Rice,1009 Kar,Local,3750,4750,4450
+Akola,Akola,Soyabean,Yellow,Non-FAQ,4000,4575,4400
+Akola,Akola,Soyabean,Yellow,Non-FAQ,4100,4600,4520
+Amarawati,Amarawati,Soyabean,Other,Local,4250,4530,4390
+Beed,Ambejaogai,Soyabean,Yellow,Non-FAQ,4450,4550,4500
+Wardha,Arvi,Soyabean,Yellow,Non-FAQ,3600,4350,4200
+Latur,Aurad Shahajani,Soyabean,Yellow,Non-FAQ,4450,4580,4515
+Latur,Ausa,Soyabean,Yellow,Non-FAQ,4311,4601,4517
+Yavatmal,Babhulgaon,Soyabean,Other,Local,3800,4600,4350
+Pune,Baramati,Soyabean,Yellow,Non-FAQ,3800,4500,4470
+Beed,Beed,Soyabean,Yellow,Non-FAQ,4630,4630,4630
+Jalana,Bhokardan(Pimpalgaon Renu),Soyabean,Yellow,Non-FAQ,4100,4400,4300
+Amarawati,Chandur Railway,Soyabean,Yellow,Non-FAQ,4260,4625,4560
+Buldhana,Chikali,Soyabean,Yellow,Non-FAQ,3700,4400,4050
+Buldhana,Deoulgaon Raja,Soyabean,Yellow,Non-FAQ,4366,4400,4400
+Hingoli,Hingoli(Kanegoan Naka),Soyabean,Yellow,Non-FAQ,4000,4100,4050
+Hingoli,Hingoli(Kanegoan Naka),Soyabean,Yellow,Non-FAQ,4000,4100,4050
+Jalana,Jalana,Soyabean,Yellow,Non-FAQ,3800,4550,4500
+Ahmednagar,Jamkhed,Soyabean,Yellow,Non-FAQ,4100,4300,4200
+Nagpur,Katol,Soyabean,Yellow,Non-FAQ,4200,4401,4350
+Beed,Kille Dharur,Soyabean,Yellow,Non-FAQ,3500,4000,4000
+Yavatmal,Kisan Market Yard,Soyabean,Other,Local,4500,4500,4500
+Ahmednagar,Kopargaon,Soyabean,Other,Local,4400,4583,4500
+Nashik,Lasalgaon(Niphad),Soyabean,Other,Local,3600,4640,4625
+Nashik,Lasalgaon(Vinchur),Soyabean,Other,Local,4251,4626,4531
+Latur,Latur(Murud),Soyabean,Yellow,Non-FAQ,3800,4600,4100
+Beed,Majalgaon,Soyabean,Other,Local,4100,4550,4500
+Buldhana,Malkapur,Soyabean,Yellow,Non-FAQ,3850,4640,4450
+Vashim,Mangrulpeer,Soyabean,Yellow,Non-FAQ,3750,4620,4500
+Vashim,Manora,Soyabean,Other,Local,3799,4700,4415
+Buldhana,Mehekar,Soyabean,Other,Local,4000,4615,4400
+Akola,Murtizapur,Soyabean,Yellow,Non-FAQ,4250,4655,4455
+Dharashiv(Usmanabad),Murum,Soyabean,Yellow,Non-FAQ,4400,4500,4433
+Nagpur,Nagpur,Soyabean,Other,Local,4000,4400,4300
+Parbhani,Palam,Soyabean,Yellow,Non-FAQ,4500,4500,4500
+Parbhani,Parbhani,Soyabean,Yellow,Non-FAQ,4600,4650,4625
+Jalana,Partur,Soyabean,Yellow,Non-FAQ,4200,4500,4300
+Ahmednagar,Rahata,Soyabean,Other,Local,4400,4400,4400
+Ahmednagar,Rahuri(Vambori),Soyabean,Other,Local,4276,4276,4276
+Vashim,Risod,Soyabean,Other,Local,4270,4590,4425
+Nagpur,Savner,Soyabean,Yellow,Non-FAQ,4300,4500,4500
+Hingoli,Sengoan,Soyabean,Yellow,Non-FAQ,4200,4500,4400
+Amarawati,Shetkari Khushi Bazar,Soyabean,Other,Local,2800,4550,3857
+Chattrapati Sambhajinagar,Sillod,Soyabean,Other,Local,4450,4450,4450
+Buldhana,Sindkhed Raja,Soyabean,Yellow,Non-FAQ,4200,4600,4400
+Dharashiv(Usmanabad),Tuljapur,Soyabean,Other,Local,4500,4500,4500
+Dharashiv(Usmanabad),Umarga,Soyabean,Yellow,Non-FAQ,4001,4001,4001
+Yavatmal,Vani,Soyabean,Yellow,Non-FAQ,4505,4650,4600
+Wardha,Wardha,Soyabean,Yellow,Non-FAQ,4335,4400,4370
+Yavatmal,Yeotmal,Soyabean,Yellow,Non-FAQ,4100,4355,4227
+Jalgaon,Amalner,Maize,Deshi Red,Non-FAQ,2100,2200,2200
+Amarawati,Amarawati,Maize,Deshi Red,Non-FAQ,2150,2250,2200
+Dhule,Dhule,Maize,Yellow,Non-FAQ,1850,2150,2050
+Jalana,Jalana,Maize,Deshi Red,Non-FAQ,2075,2311,2225
+Ahmednagar,Karjat,Maize,Yellow,Non-FAQ,2000,2200,2000
+Ahmednagar,Karjat,Maize,Yellow,Non-FAQ,2100,2100,2100
+Sholapur,Karmala,Maize,Other,Non-FAQ,2200,2200,2200
+Nashik,Lasalgaon(Niphad),Maize,Deshi White,Non-FAQ,2399,2399,2399
+Nashik,Lasalgaon(Niphad),Maize,Other,Non-FAQ,1900,2350,2350
+Nashik,Malegaon,Maize,Yellow,Non-FAQ,1700,2240,2051
+Buldhana,Malkapur,Maize,Yellow,Non-FAQ,1910,2210,2150
+Chattrapati Sambhajinagar,Paithan,Maize,Yellow,FAQ,2400,2400,2400
+Pune,Pune,Maize,Deshi Red,FAQ,2400,2700,2550
+Pune,Pune,Maize,Deshi Red,FAQ,2500,2700,2600
+Sangli,Sangli,Maize,Other,FAQ,2400,2500,2450
+Nagpur,Savner,Maize,Other,Non-FAQ,1965,1965,1965
+Nandurbar,Shahada,Maize,Deshi Red,Non-FAQ,2100,2100,2100
+Dhule,Shirpur,Maize,Yellow,Non-FAQ,1926,2151,2000
+Chattrapati Sambhajinagar,Sillod,Maize,Yellow,Non-FAQ,2100,2200,2150
+Buldhana,Sindkhed Raja,Maize,Yellow,Non-FAQ,1800,2200,2100

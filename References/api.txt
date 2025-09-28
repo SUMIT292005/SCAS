@@ -1,0 +1,9 @@
+Weather api:
+
+"fd77bfa0bcab6a21f767018559bf6491" 
+
+
+Price api:
+
+"579b464db66ec23bdd00000173a887d4c9b54bc868e20027de940429"
+

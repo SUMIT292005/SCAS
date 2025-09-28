@@ -1,0 +1,856 @@
+{% extends "base.html" %}
+
+{% block head %}
+<script>
+function toggleWeatherInputs() {
+    const checkbox = document.getElementById("autoWeather");
+    const manualInputs = document.getElementById("manualWeatherInputs");
+    const autoInputs = document.getElementById("autoWeatherInputs");
+    
+    if (checkbox.checked) {
+        manualInputs.style.display = "none";
+        autoInputs.style.display = "block";
+        autoInputs.classList.add('fade-in-slide');
+        manualInputs.querySelectorAll("input").forEach(el => el.value = "");
+    } else {
+        manualInputs.style.display = "block";
+        autoInputs.style.display = "none";
+        manualInputs.classList.add('fade-in-slide');
+    }
+    
+    // Add visual feedback to checkbox
+    const checkboxContainer = checkbox.closest('.weather-toggle');
+    if (checkbox.checked) {
+        checkboxContainer.classList.add('active');
+    } else {
+        checkboxContainer.classList.remove('active');
+    }
+}
+
+function fetchWeatherForDistrict() {
+    const district = document.getElementById("districtSelect").value;
+    if (!district) return;
+
+    // Add loading state
+    const submitBtn = document.querySelector('.submit-btn');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Fetching weather data...';
+    submitBtn.disabled = true;
+    
+    // Add loading to weather displays
+    const weatherValues = ['rainfallValue', 'temperatureValue', 'humidityValue'];
+    weatherValues.forEach(id => {
+        document.getElementById(id).innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    });
+
+    fetch("/get_weather_data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ district: district })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            // Animate value updates
+            animateWeatherValue("rainfallValue", data.weather.rainfall + " mm/day");
+            animateWeatherValue("temperatureValue", data.weather.temperature + " °C");
+            animateWeatherValue("humidityValue", data.weather.humidity + " %");
+            
+            // Check the boxes with animation
+            setTimeout(() => {
+                ["rainfallBox", "temperatureBox", "humidityBox"].forEach(id => {
+                    const checkbox = document.getElementById(id);
+                    checkbox.checked = true;
+                    checkbox.closest('.weather-item').classList.add('data-loaded');
+                });
+            }, 500);
+        } else {
+            weatherValues.forEach(id => {
+                document.getElementById(id).innerText = '--';
+            });
+            showNotification("Error fetching weather: " + data.error, 'error');
+        }
+        
+        // Restore button
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    })
+    .catch(error => {
+        weatherValues.forEach(id => {
+            document.getElementById(id).innerText = '--';
+        });
+        showNotification("Network error occurred", 'error');
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    });
+}
+
+function animateWeatherValue(elementId, newValue) {
+    const element = document.getElementById(elementId);
+    element.classList.add('value-updating');
+    setTimeout(() => {
+        element.innerText = newValue;
+        element.classList.remove('value-updating');
+        element.classList.add('value-updated');
+        setTimeout(() => element.classList.remove('value-updated'), 1000);
+    }, 300);
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : 'info-circle'}"></i>
+        <span>${message}</span>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => document.body.removeChild(notification), 300);
+    }, 3000);
+}
+
+function handleFormSubmit(e) {
+    const submitBtn = e.target.querySelector('.submit-btn');
+    const originalText = submitBtn.innerHTML;
+    
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-brain fa-spin"></i> Analyzing soil & weather...';
+    
+    // Add a slight delay to show the loading state
+    setTimeout(() => {
+        // Form will submit normally
+    }, 500);
+}
+
+window.onload = function() {
+    // Set initial state
+    const autoWeatherCheck = document.getElementById("autoWeather");
+    if (autoWeatherCheck.checked) {
+        document.getElementById("autoWeatherInputs").style.display = "block";
+        document.getElementById("manualWeatherInputs").style.display = "none";
+        autoWeatherCheck.closest('.weather-toggle').classList.add('active');
+    }
+    
+    // Add entrance animations
+    document.querySelector('.page-header').classList.add('slide-in-left');
+    document.querySelector('.advisor-form').classList.add('slide-in-up');
+    
+    // Set up form submit handler
+    document.querySelector('form').addEventListener('submit', handleFormSubmit);
+    
+    // If there are results, add animation
+    const resultsCard = document.querySelector('.results-card');
+    if (resultsCard) {
+        resultsCard.classList.add('fade-in');
+    }
+    
+    const warningsCard = document.querySelector('.warnings-card');
+    if (warningsCard) {
+        warningsCard.classList.add('fade-in');
+    }
+};
+</script>
+
+<style>
+  .page-header {
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(0, 255, 127, 0.5);
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 40px;
+    text-align: center;
+    animation: titleGlow 2s ease-in-out infinite alternate;
+  }
+  
+  @keyframes titleGlow {
+    0% { filter: drop-shadow(0 0 10px rgba(0, 255, 127, 0.5)); }
+    100% { filter: drop-shadow(0 0 20px rgba(0, 255, 127, 0.8)); }
+  }
+  
+  .advisor-form {
+    background: rgba(26, 31, 53, 0.8);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(0, 255, 127, 0.3);
+    border-radius: 20px;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 30px;
+  }
+  
+  .advisor-form::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(circle at 10% 20%, rgba(0, 255, 127, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+    z-index: -1;
+  }
+  
+  .form-group {
+    margin-bottom: 25px;
+  }
+  
+  .form-label {
+    color: var(--text-light);
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .enhanced-input, .enhanced-select {
+    background: rgba(10, 15, 28, 0.8);
+    border: 2px solid rgba(0, 255, 127, 0.3);
+    color: var(--text-light);
+    border-radius: 12px;
+    padding: 12px 16px;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    width: 100%;
+  }
+  
+  .enhanced-input:focus, .enhanced-select:focus {
+    background: rgba(10, 15, 28, 0.9);
+    border-color: var(--accent-green);
+    box-shadow: 0 0 20px rgba(0, 255, 127, 0.3);
+    color: var(--text-light);
+    outline: none;
+    transform: translateY(-2px);
+  }
+  
+  .enhanced-input::placeholder {
+    color: rgba(224, 230, 237, 0.5);
+  }
+  
+  .enhanced-select option {
+    background: var(--secondary-dark);
+    color: var(--text-light);
+    padding: 10px;
+  }
+  
+  .soil-inputs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .soil-input-group {
+    position: relative;
+  }
+  
+  .soil-input-group .form-label {
+    font-size: 0.95rem;
+    color: var(--accent-green);
+    text-shadow: 0 0 5px rgba(0, 255, 127, 0.3);
+  }
+  
+  .weather-section {
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .weather-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-green), var(--accent-blue));
+    animation: borderGlow 2s ease-in-out infinite;
+  }
+  
+  @keyframes borderGlow {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+  
+  .weather-header {
+    color: var(--accent-blue);
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+  }
+  
+  .weather-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 20px;
+    background: rgba(0, 212, 255, 0.1);
+    border-radius: 12px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .weather-toggle:hover {
+    background: rgba(0, 212, 255, 0.15);
+    transform: translateX(5px);
+  }
+  
+  .weather-toggle.active {
+    background: rgba(0, 212, 255, 0.2);
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+  }
+  
+  .custom-checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--accent-blue);
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .custom-checkbox:checked {
+    background: var(--accent-blue);
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+  }
+  
+  .manual-weather-inputs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  
+  .district-selector {
+    margin-bottom: 20px;
+  }
+  
+  .weather-display {
+    display: grid;
+    gap: 15px;
+  }
+  
+  .weather-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: rgba(10, 15, 28, 0.6);
+    border-radius: 10px;
+    border-left: 4px solid var(--accent-blue);
+    transition: all 0.3s ease;
+  }
+  
+  .weather-item.data-loaded {
+    background: rgba(0, 212, 255, 0.1);
+    border-left-color: var(--accent-green);
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+  }
+  
+  .weather-item .custom-checkbox {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .weather-item .custom-checkbox:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .weather-value {
+    font-weight: bold;
+    color: var(--accent-blue);
+  }
+  
+  .value-updating {
+    color: #ffa500;
+    transform: scale(1.05);
+  }
+  
+  .value-updated {
+    color: var(--accent-green);
+    text-shadow: 0 0 5px rgba(0, 255, 127, 0.5);
+  }
+  
+  .submit-btn {
+    background: linear-gradient(45deg, var(--accent-green), var(--accent-blue));
+    border: none;
+    color: var(--primary-dark);
+    font-weight: bold;
+    font-size: 1.2rem;
+    padding: 18px 40px;
+    border-radius: 25px;
+    width: 100%;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  
+  .submit-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: all 0.5s ease;
+  }
+  
+  .submit-btn:hover::before {
+    left: 100%;
+  }
+  
+  .submit-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 255, 127, 0.4);
+  }
+  
+  .submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .results-card {
+    background: rgba(26, 31, 53, 0.9);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(0, 255, 127, 0.4);
+    border-radius: 18px;
+    padding: 30px;
+    margin-top: 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .results-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-green), var(--accent-blue), var(--accent-green));
+    animation: borderGlow 2s ease-in-out infinite;
+  }
+  
+  .results-header {
+    color: var(--accent-green);
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .fertilizer-list {
+    list-style: none;
+    padding: 0;
+    counter-reset: fertilizer-counter;
+  }
+  
+  .fertilizer-item {
+    counter-increment: fertilizer-counter;
+    background: rgba(10, 15, 28, 0.6);
+    padding: 15px 20px 15px 50px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    border-left: 4px solid var(--accent-green);
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  
+  .fertilizer-item::before {
+    content: counter(fertilizer-counter);
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--accent-green);
+    color: var(--primary-dark);
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.8rem;
+  }
+  
+  .fertilizer-item:hover {
+    background: rgba(10, 15, 28, 0.8);
+    transform: translateX(10px);
+    box-shadow: 0 5px 15px rgba(0, 255, 127, 0.2);
+  }
+  
+  .warnings-card {
+    background: rgba(220, 53, 69, 0.1);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    border-radius: 15px;
+    padding: 25px;
+    margin-top: 20px;
+  }
+  
+  .warnings-header {
+    color: #ff6b6b;
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .warning-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .warning-item {
+    background: rgba(220, 53, 69, 0.1);
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    border-left: 3px solid #ff6b6b;
+    color: var(--text-light);
+  }
+  
+  .notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(26, 31, 53, 0.95);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(0, 255, 127, 0.3);
+    border-radius: 12px;
+    padding: 15px 20px;
+    color: var(--text-light);
+    z-index: 10000;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 300px;
+  }
+  
+  .notification.error {
+    border-color: rgba(220, 53, 69, 0.5);
+  }
+  
+  .notification.show {
+    transform: translateX(0);
+  }
+  
+  .notification i {
+    color: var(--accent-green);
+  }
+  
+  .notification.error i {
+    color: #ff6b6b;
+  }
+  
+  /* Animation Classes */
+  .fade-in {
+    animation: fadeIn 0.8s ease-in;
+  }
+  
+  .slide-in-up {
+    animation: slideInUp 0.6s ease-out;
+  }
+  
+  .slide-in-left {
+    animation: slideInLeft 0.6s ease-out;
+  }
+  
+  .fade-in-slide {
+    animation: fadeInSlide 0.5s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes slideInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-50px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  
+  @keyframes fadeInSlide {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .advisor-form {
+      padding: 20px;
+    }
+    
+    .soil-inputs, .manual-weather-inputs {
+      grid-template-columns: 1fr;
+    }
+    
+    .page-header {
+      font-size: 2rem;
+    }
+    
+    .weather-section {
+      padding: 20px;
+    }
+    
+    .notification {
+      right: 10px;
+      left: 10px;
+      max-width: none;
+      transform: translateY(-100%);
+    }
+    
+    .notification.show {
+      transform: translateY(0);
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .page-header {
+      font-size: 1.8rem;
+    }
+    
+    .weather-toggle {
+      flex-direction: column;
+      text-align: center;
+      gap: 8px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="page-header">🌱 Fertilizer Advisor (Growth)</h2>
+
+  <form method="POST" class="advisor-form">
+    <!-- Crop Selection -->
+    <div class="form-group">
+      <label class="form-label">
+        <i class="fas fa-seedling"></i> Select Crop
+      </label>
+      <select name="crop" class="enhanced-select" required>
+        <option value="">-- Select Crop --</option>
+        {% for c in ["Wheat","Rice","Maize","Cotton","Sugarcane","Soybean","Groundnut"] %}
+          <option value="{{ c }}" {% if request.form.get('crop') == c %}selected{% endif %}>
+            {% if c == "Wheat" %}🌾
+            {% elif c == "Rice" %}🍚
+            {% elif c == "Maize" %}🌽
+            {% elif c == "Cotton" %}☁️
+            {% elif c == "Sugarcane" %}🎋
+            {% elif c == "Soybean" %}🌱
+            {% elif c == "Groundnut" %}🥜
+            {% endif %} {{ c }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- Soil Inputs -->
+    <div class="soil-inputs">
+      <div class="soil-input-group">
+        <label class="form-label">
+          <i class="fas fa-atom"></i> Nitrogen (N)
+        </label>
+        <input type="number" step="0.1" name="N" class="enhanced-input" 
+               placeholder="Enter N value" required 
+               value="{{ request.form.get('N','') }}">
+      </div>
+      <div class="soil-input-group">
+        <label class="form-label">
+          <i class="fas fa-fire"></i> Phosphorus (P)
+        </label>
+        <input type="number" step="0.1" name="P" class="enhanced-input" 
+               placeholder="Enter P value" required 
+               value="{{ request.form.get('P','') }}">
+      </div>
+      <div class="soil-input-group">
+        <label class="form-label">
+          <i class="fas fa-leaf"></i> Potassium (K)
+        </label>
+        <input type="number" step="0.1" name="K" class="enhanced-input" 
+               placeholder="Enter K value" required 
+               value="{{ request.form.get('K','') }}">
+      </div>
+      <div class="soil-input-group">
+        <label class="form-label">
+          <i class="fas fa-vial"></i> Soil pH
+        </label>
+        <input type="number" step="0.1" name="pH" class="enhanced-input" 
+               placeholder="Enter pH value" required 
+               value="{{ request.form.get('pH','') }}">
+      </div>
+    </div>
+
+    <!-- Weather Section -->
+    <div class="weather-section">
+      <h5 class="weather-header">
+        <i class="fas fa-cloud-sun"></i> Weather Inputs
+      </h5>
+      
+      <div class="weather-toggle" onclick="document.getElementById('autoWeather').click()">
+        <input class="custom-checkbox" type="checkbox" id="autoWeather" name="autoWeather"
+               onchange="toggleWeatherInputs()" {% if request.form.get('autoWeather') %}checked{% endif %}>
+        <label class="form-check-label" for="autoWeather">
+          <i class="fas fa-satellite-dish"></i> Use Automatic Weather Data
+        </label>
+      </div>
+
+      <!-- Manual Weather Inputs -->
+      <div id="manualWeatherInputs" class="manual-weather-inputs" 
+           {% if request.form.get('autoWeather') %}style="display:none;"{% endif %}>
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-cloud-rain"></i> Rainfall (mm/day)
+          </label>
+          <input type="number" step="0.1" name="rainfall" class="enhanced-input"
+                 placeholder="Enter daily rainfall"
+                 value="{{ request.form.get('rainfall','') }}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-thermometer-half"></i> Temperature (°C)
+          </label>
+          <input type="number" step="0.1" name="temperature" class="enhanced-input"
+                 placeholder="Enter temperature"
+                 value="{{ request.form.get('temperature','') }}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-tint"></i> Humidity (%)
+          </label>
+          <input type="number" step="0.1" name="humidity" class="enhanced-input"
+                 placeholder="Enter humidity"
+                 value="{{ request.form.get('humidity','') }}">
+        </div>
+      </div>
+
+      <!-- Auto Weather Inputs -->
+      <div id="autoWeatherInputs" {% if not request.form.get('autoWeather') %}style="display:none;"{% endif %}>
+        <div class="district-selector">
+          <label class="form-label">
+            <i class="fas fa-map-marker-alt"></i> Select District
+          </label>
+          <select id="districtSelect" name="district" class="enhanced-select" onchange="fetchWeatherForDistrict()">
+            <option value="">-- Select District --</option>
+            {% for dist in districts %}
+              <option value="{{ dist }}" {% if request.form.get('district') == dist %}selected{% endif %}>{{ dist }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        
+        <div class="weather-display">
+          <div class="weather-item">
+            <input class="custom-checkbox" type="checkbox" id="rainfallBox" disabled>
+            <label class="form-check-label" for="rainfallBox">
+              <i class="fas fa-cloud-rain"></i> Rainfall: 
+              <span id="rainfallValue" class="weather-value">
+                {{ weather.rainfall if weather else '--' }}
+              </span>
+              {% if weather and weather.rainfall %} mm/day{% endif %}
+            </label>
+          </div>
+          <div class="weather-item">
+            <input class="custom-checkbox" type="checkbox" id="temperatureBox" disabled>
+            <label class="form-check-label" for="temperatureBox">
+              <i class="fas fa-thermometer-half"></i> Temperature: 
+              <span id="temperatureValue" class="weather-value">
+                {{ weather.temperature if weather else '--' }}
+              </span>
+              {% if weather and weather.temperature %} °C{% endif %}
+            </label>
+          </div>
+          <div class="weather-item">
+            <input class="custom-checkbox" type="checkbox" id="humidityBox" disabled>
+            <label class="form-check-label" for="humidityBox">
+              <i class="fas fa-tint"></i> Humidity: 
+              <span id="humidityValue" class="weather-value">
+                {{ weather.humidity if weather else '--' }}
+              </span>
+              {% if weather and weather.humidity %} %{% endif %}
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn">
+      <i class="fas fa-flask"></i> Get Fertilizer Suggestions
+    </button>
+  </form>
+
+  <!-- Display Results -->
+  {% if suggestions %}
+  <div class="results-card">
+    <h4 class="results-header">
+      <i class="fas fa-award"></i> Recommended Fertilizers
+    </h4>
+    <ul class="fertilizer-list">
+      {% for s in suggestions.fertilizers %}
+      <li class="fertilizer-item">{{ s }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if suggestions and suggestions.warnings %}
+  <div class="warnings-card">
+    <h5 class="warnings-header">
+      <i class="fas fa-exclamation-triangle"></i> Weather Warnings
+    </h5>
+    <ul class="warning-list">
+      {% for w in suggestions.warnings %}
+      <li class="warning-item">
+        <i class="fas fa-warning"></i> {{ w }}
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

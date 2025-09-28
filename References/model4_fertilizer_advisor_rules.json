@@ -1,0 +1,14 @@
+{
+  "Wheat": {
+    "N": {"low": "Urea", "medium": "DAP", "high": "No Nitrogen needed"},
+    "P": {"low": "SSP", "medium": "No Phosphorus needed", "high": "No Phosphorus needed"},
+    "K": {"low": "MOP", "medium": "No Potassium needed", "high": "No Potassium needed"},
+    "pH": {"acidic": "Add lime", "neutral": "No pH correction needed", "alkaline": "Add sulfur"}
+  },
+  "Rice": {
+    "N": {"low": "Urea", "medium": "DAP", "high": "No Nitrogen needed"},
+    "P": {"low": "SSP", "medium": "No Phosphorus needed", "high": "No Phosphorus needed"},
+    "K": {"low": "MOP", "medium": "No Potassium needed", "high": "No Potassium needed"},
+    "pH": {"acidic": "Add lime", "neutral": "No pH correction needed", "alkaline": "Add sulfur"}
+  }
+}
