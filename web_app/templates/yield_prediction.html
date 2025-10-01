@@ -156,7 +156,7 @@ function initializeAutoFillToggles() {
     updateWeatherVisibility();
 }
 
-// ===== Fixed Dynamic Rainfall Calculation =====
+// ===== Fixed Dynamic Rainfall Calculation with Reset Logic =====
 function initializeRainfallCalculation() {
     const rainfallInput = document.getElementById('rainfall');
     const daysInput = document.getElementById('days');
@@ -174,38 +174,61 @@ function initializeRainfallCalculation() {
             // Auto-fill mode: use stored per-day value
             perDayRainfall = parseFloat(rainfallInput.dataset.perDay);
         } else {
-            // Manual mode: use current input value as per-day rainfall
-            perDayRainfall = parseFloat(rainfallInput.value);
+            // Manual mode: use stored original value or current input
+            perDayRainfall = parseFloat(rainfallInput.dataset.originalPerDay || rainfallInput.value);
         }
         
         const days = parseFloat(daysInput.value);
         
-        // Apply multiplication logic for BOTH auto-fill and manual input
-        if (!isNaN(perDayRainfall) && !isNaN(days)) {
-            const totalRainfall = (perDayRainfall * days).toFixed(2);
-            
-            // Only animate the change if it's different from current value
-            if (rainfallInput.value !== totalRainfall) {
-                animateValueChange(rainfallInput, totalRainfall);
+        // Apply logic based on whether days field has a value
+        if (!isNaN(perDayRainfall)) {
+            if (!isNaN(days) && days > 0) {
+                // Calculate total rainfall
+                const totalRainfall = (perDayRainfall * days).toFixed(2);
+                if (rainfallInput.value !== totalRainfall) {
+                    animateValueChange(rainfallInput, totalRainfall);
+                }
+            } else {
+                // Reset to original per-day value when days is empty/invalid
+                const originalValue = rainfallInput.dataset.originalPerDay || rainfallInput.dataset.perDay;
+                if (originalValue && rainfallInput.value !== originalValue) {
+                    animateValueChange(rainfallInput, originalValue);
+                }
             }
         }
         
         updateSubmitButton();
     }
 
+    // Store original per-day rainfall when user manually enters it
+    function storeOriginalPerDayRainfall() {
+        if (!rainfallInput.readOnly && rainfallInput.value) {
+            rainfallInput.dataset.originalPerDay = rainfallInput.value;
+        }
+    }
+
     // Initialize per-day rainfall on page load
     if (rainfallInput.value) {
         rainfallInput.dataset.perDay = rainfallInput.value;
+        rainfallInput.dataset.originalPerDay = rainfallInput.value;
     }
 
     // Recalculate when Days_to_Harvest changes
     daysInput.addEventListener('input', updateTotalRainfall);
     
-    // Recalculate when rainfall changes (for manual input)
+    // Handle manual rainfall input
     rainfallInput.addEventListener('input', function() {
         if (!rainfallInput.readOnly) {
-            // In manual mode, treat input as per-day rainfall
+            // Store the manually entered value as original per-day rainfall
+            storeOriginalPerDayRainfall();
             updateTotalRainfall();
+        }
+    });
+
+    // Store original value when user finishes entering rainfall
+    rainfallInput.addEventListener('blur', function() {
+        if (!rainfallInput.readOnly) {
+            storeOriginalPerDayRainfall();
         }
     });
     
