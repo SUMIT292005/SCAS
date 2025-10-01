@@ -156,7 +156,7 @@ function initializeAutoFillToggles() {
     updateWeatherVisibility();
 }
 
-// ===== Dynamic Rainfall Calculation =====
+// ===== Fixed Dynamic Rainfall Calculation =====
 function initializeRainfallCalculation() {
     const rainfallInput = document.getElementById('rainfall');
     const daysInput = document.getElementById('days');
@@ -167,20 +167,47 @@ function initializeRainfallCalculation() {
     }
 
     function updateTotalRainfall() {
-        const perDayRainfall = parseFloat(rainfallInput.dataset.perDay || rainfallInput.value);
-        const days = parseFloat(daysInput.value);
-        if(!isNaN(perDayRainfall) && !isNaN(days) && rainfallInput.readOnly){
-            const newValue = (perDayRainfall * days).toFixed(2);
-            animateValueChange(rainfallInput, newValue);
+        let perDayRainfall;
+        
+        // Get per-day rainfall value
+        if (rainfallInput.readOnly && rainfallInput.dataset.perDay) {
+            // Auto-fill mode: use stored per-day value
+            perDayRainfall = parseFloat(rainfallInput.dataset.perDay);
+        } else {
+            // Manual mode: use current input value as per-day rainfall
+            perDayRainfall = parseFloat(rainfallInput.value);
         }
+        
+        const days = parseFloat(daysInput.value);
+        
+        // Apply multiplication logic for BOTH auto-fill and manual input
+        if (!isNaN(perDayRainfall) && !isNaN(days)) {
+            const totalRainfall = (perDayRainfall * days).toFixed(2);
+            
+            // Only animate the change if it's different from current value
+            if (rainfallInput.value !== totalRainfall) {
+                animateValueChange(rainfallInput, totalRainfall);
+            }
+        }
+        
         updateSubmitButton();
     }
 
     // Initialize per-day rainfall on page load
-    rainfallInput.dataset.perDay = rainfallInput.value;
+    if (rainfallInput.value) {
+        rainfallInput.dataset.perDay = rainfallInput.value;
+    }
 
-    // Recalculate total rainfall when Days_to_Harvest changes
+    // Recalculate when Days_to_Harvest changes
     daysInput.addEventListener('input', updateTotalRainfall);
+    
+    // Recalculate when rainfall changes (for manual input)
+    rainfallInput.addEventListener('input', function() {
+        if (!rainfallInput.readOnly) {
+            // In manual mode, treat input as per-day rainfall
+            updateTotalRainfall();
+        }
+    });
     
     // Add input listeners for form validation
     document.querySelectorAll('.enhanced-input, .enhanced-select').forEach(input => {
@@ -851,13 +878,12 @@ function toggleWeather() {
       <div class="row">
         <div class="col-md-4 form-group">
           <label for="rainfall" class="form-label">
-            <i class="fas fa-cloud-rain"></i> Rainfall (mm)
+            <i class="fas fa-cloud-rain"></i> Rainfall (mm/day)
           </label>
           <input type="number" step="0.1" class="enhanced-input" name="Rainfall_mm" id="rainfall" 
-                placeholder="Enter rainfall amount" value="{{ request.form.Rainfall_mm }}">
+                placeholder="Enter per-day rainfall" value="{{ request.form.Rainfall_mm }}">
         </div>
         <div class="col-md-4 form-group">
-
           <label for="temp" class="form-label">
             <i class="fas fa-thermometer-half"></i> Temperature (°C)
           </label>
