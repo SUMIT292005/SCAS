@@ -206,8 +206,7 @@ loaded_models = {}
 loaded_labels = {}
 
 # ===========================================
-# Model + label mapping
-#   Format: crop: (model_path, label_path, preprocessing_mode, internal_preprocessing)
+# Model + label mapping (MAIZE REMOVED)
 # ===========================================
 CROP_MODELS = {
     "cotton": (
@@ -225,15 +224,9 @@ CROP_MODELS = {
     "soybean": (
         "models/updated_soybean_disease_efficientnetb3.h5",
         "models/soybean_class_indices.json",
-        "rescale",        
+        "rescale",
         False
-    ),
-    "maize": (
-        "models/updated_maize_disease_efficientnetb0.h5",
-        "models/maize_class_indices.json",
-        None,             # ✅ no external preprocessing
-        True              # ✅ preprocessing baked into inference model
-    ),
+    )
 }
 
 # ===========================================
@@ -250,20 +243,17 @@ def load_model_and_labels(crop):
             raise FileNotFoundError(f"❌ Class label file missing for {crop}: {label_path}")
 
         # For problematic models, use compile=False
-        if crop in ["cotton"]:  # Add other problematic crops here
+        if crop in ["cotton"]:
             print(f"🔄 Loading {crop} model with compile=False...")
             model = tf.keras.models.load_model(model_path, compile=False)
-            
-            # Recompile if needed
             model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
         else:
-            # Load normally for other crops
             model = tf.keras.models.load_model(model_path)
         
         print(f"🔍 Loaded {crop} model with input shape: {model.input_shape}")
         loaded_models[crop] = model
 
-        # Load labels (your existing code remains the same)
+        # Load labels
         with open(label_path, "r") as f:
             labels_dict = json.load(f)
             if isinstance(labels_dict, dict):
@@ -275,34 +265,26 @@ def load_model_and_labels(crop):
                 loaded_labels[crop] = labels_dict
 
     return loaded_models[crop], loaded_labels[crop]
+
 # ===========================================
 # Preprocess image
 # ===========================================
 def preprocess_image(img_path, mode, internal_preprocessing, model):
     """Apply preprocessing with automatic shape detection."""
     
-    # Get model's expected input shape
     input_shape = model.input_shape
-    expected_channels = input_shape[-1]  # Last dimension is channels
-    
-    # Load image with appropriate color mode
-    if expected_channels == 1:
-        color_mode = "grayscale"
-    else:
-        color_mode = "rgb"
+    expected_channels = input_shape[-1]
+
+    color_mode = "grayscale" if expected_channels == 1 else "rgb"
     
     img = image.load_img(img_path, target_size=(224, 224), color_mode=color_mode)
     img_array = image.img_to_array(img)
-    
-    # Ensure correct channel dimension
-    if expected_channels == 1 and len(img_array.shape) == 3 and img_array.shape[-1] == 3:
-        # Convert RGB to grayscale
+
+    if expected_channels == 1 and img_array.shape[-1] == 3:
         img_array = np.mean(img_array, axis=-1, keepdims=True)
     elif expected_channels == 3 and len(img_array.shape) == 2:
-        # Convert grayscale to RGB
         img_array = np.stack([img_array] * 3, axis=-1)
-    
-    # Add batch dimension
+
     img_array = np.expand_dims(img_array, axis=0)
 
     if internal_preprocessing:
@@ -315,21 +297,22 @@ def preprocess_image(img_path, mode, internal_preprocessing, model):
         else:
             raise ValueError(f"❌ Unknown preprocessing mode: {mode}")
 
+# ===========================================
+# Predict
+# ===========================================
 def detect_disease_from_image(img_path, crop):
-    """Run disease detection for a given crop."""
     model, class_labels = load_model_and_labels(crop)
     _, _, preprocess_mode, internal_preprocessing = CROP_MODELS[crop]
 
-    # Preprocess input - pass model to automatically detect required shape
     img_array = preprocess_image(img_path, preprocess_mode, internal_preprocessing, model)
 
-    # Predict
     preds = model.predict(img_array, verbose=0)
     class_index = np.argmax(preds[0])
     predicted_class = class_labels[class_index]
     confidence = round(float(np.max(preds[0]) * 100), 2)
 
     return f"✅ Predicted Class: {predicted_class}", f"✅ Confidence: {confidence:.2f}%"
+
 
 
 def recommend_treatment(crop, disease):
