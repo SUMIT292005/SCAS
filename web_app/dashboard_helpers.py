@@ -196,131 +196,93 @@ import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-import tensorflow as tf
 import numpy as np
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.efficientnet import preprocess_input as eff_preprocess
-import os, json
+import json
+import tensorflow as tf  # only needed for preprocess_input
 
-# ===========================================
-# Cache for loaded models and labels
-# ===========================================
-loaded_models = {}
-loaded_labels = {}
-
-# ===========================================
-# Model + label mapping (MAIZE REMOVED)
-# ===========================================
+# ============================================
+# TFLITE MODELS (SUPER LIGHTWEIGHT)
+# ============================================
 CROP_MODELS = {
     "cotton": (
-        "models/updated_cotton_disease_efficientnetb3.h5",
+        "models/cotton_model.tflite",
         "models/cotton_class_indices.json",
-        "rescale",        # trained with /255.0
-        False             # preprocessing not inside model
+        "rescale",
+        False
     ),
     "tomato": (
-        "models/updated_tomato_disease_efficientnetb0.h5",
+        "models/tomato_model.tflite",
         "models/tomato_class_indices.json",
-        "efficientnet",   # trained with eff_preprocess
+        "efficientnet",
         False
-    )
+    ),
 }
 
-# ===========================================
-# Load model + labels
-# ===========================================
+loaded_interpreters = {}
+loaded_labels = {}
+
+# ============================================
+# LOAD TFLITE MODEL
+# ============================================
 def load_model_and_labels(crop):
-    """Load model and its class labels for a given crop."""
-    if crop not in loaded_models:
+    if crop not in loaded_interpreters:
         model_path, label_path, _, _ = CROP_MODELS[crop]
 
-        if not os.path.exists(model_path):
-            raise FileNotFoundError(f"❌ Model not found for {crop}: {model_path}")
-        if not os.path.exists(label_path):
-            raise FileNotFoundError(f"❌ Class label file missing for {crop}: {label_path}")
-
-        # For problematic models, use compile=False
-        if crop in ["cotton"]:
-            print(f"🔄 Loading {crop} model with compile=False...")
-            model = tf.keras.models.load_model(model_path, compile=False)
-            model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-        else:
-            model = tf.keras.models.load_model(model_path)
-        
-        print(f"🔍 Loaded {crop} model with input shape: {model.input_shape}")
-        loaded_models[crop] = model
+        # Load interpreter
+        interpreter = tf.lite.Interpreter(model_path=model_path)
+        interpreter.allocate_tensors()
+        loaded_interpreters[crop] = interpreter
 
         # Load labels
         with open(label_path, "r") as f:
             labels_dict = json.load(f)
-            if isinstance(labels_dict, dict):
-                sorted_labels = [None] * len(labels_dict)
-                for k, v in labels_dict.items():
-                    sorted_labels[int(v)] = k
-                loaded_labels[crop] = sorted_labels
-            else:
-                loaded_labels[crop] = labels_dict
+            sorted_labels = [None] * len(labels_dict)
+            for k, v in labels_dict.items():
+                sorted_labels[int(v)] = k
+            loaded_labels[crop] = sorted_labels
 
-    return loaded_models[crop], loaded_labels[crop]
+    return loaded_interpreters[crop], loaded_labels[crop]
 
-# ===========================================
-# Preprocess image
-# ===========================================
-def preprocess_image(img_path, mode, internal_preprocessing, model):
-    """Apply preprocessing with automatic shape detection."""
-    
-    input_shape = model.input_shape
-    expected_channels = input_shape[-1]
-
-    color_mode = "grayscale" if expected_channels == 1 else "rgb"
-    
-    img = image.load_img(img_path, target_size=(224, 224), color_mode=color_mode)
+# ============================================
+# IMAGE PREPROCESS
+# ============================================
+def preprocess_image(img_path, mode):
+    img = image.load_img(img_path, target_size=(224, 224))
     img_array = image.img_to_array(img)
-
-    if expected_channels == 1 and img_array.shape[-1] == 3:
-        img_array = np.mean(img_array, axis=-1, keepdims=True)
-    elif expected_channels == 3 and len(img_array.shape) == 2:
-        img_array = np.stack([img_array] * 3, axis=-1)
 
     img_array = np.expand_dims(img_array, axis=0)
 
-    if internal_preprocessing:
-        return img_array
-    else:
-        if mode == "rescale":
-            return img_array / 255.0
-        elif mode == "efficientnet":
-            return eff_preprocess(img_array)
-        else:
-            raise ValueError(f"❌ Unknown preprocessing mode: {mode}")
+    if mode == "rescale":
+        img_array = img_array / 255.0
+    elif mode == "efficientnet":
+        img_array = eff_preprocess(img_array)
 
-# ===========================================
-# Predict
-# ===========================================
+    return img_array.astype(np.float32)
+
+# ============================================
+# PREDICT USING TFLITE
+# ============================================
 def detect_disease_from_image(img_path, crop):
-    model, class_labels = load_model_and_labels(crop)
-    _, _, preprocess_mode, internal_preprocessing = CROP_MODELS[crop]
+    interpreter, class_labels = load_model_and_labels(crop)
+    _, _, preprocess_mode, _ = CROP_MODELS[crop]
 
-    img_array = preprocess_image(img_path, preprocess_mode, internal_preprocessing, model)
+    img_array = preprocess_image(img_path, preprocess_mode)
 
-    preds = model.predict(img_array, verbose=0)
-    class_index = np.argmax(preds[0])
+    input_details = interpreter.get_input_details()
+    output_details = interpreter.get_output_details()
+
+    interpreter.set_tensor(input_details[0]['index'], img_array)
+    interpreter.invoke()
+
+    preds = interpreter.get_tensor(output_details[0]['index'])[0]
+
+    class_index = np.argmax(preds)
     predicted_class = class_labels[class_index]
-    confidence = round(float(np.max(preds[0]) * 100), 2)
+    confidence = round(float(np.max(preds) * 100), 2)
 
-    return f"✅ Predicted Class: {predicted_class}", f"✅ Confidence: {confidence:.2f}%"
-
-# ===========================================
-# 🔄 PRELOAD ALL CROP DISEASE MODELS AT STARTUP
-# ===========================================
-print("🔄 Preloading disease detection models...")
-
-for c in CROP_MODELS.keys():
-    try:
-        load_model_and_labels(c)
-        print(f"✅ Loaded {c} model successfully")
-    except Exception as e:
-        print(f"❌ Failed to load {c} model: {e}")
+    return f"Predicted Class: {predicted_class}", f"Confidence: {confidence}%"
 
 def recommend_treatment(crop, disease):
     """
