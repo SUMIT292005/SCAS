@@ -192,6 +192,9 @@ def suggest_growth_fertilizer(crop, N, P, K, pH, rainfall=None, temperature=None
 
 
 
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 import tensorflow as tf
 import numpy as np
@@ -313,7 +316,17 @@ def detect_disease_from_image(img_path, crop):
 
     return f"✅ Predicted Class: {predicted_class}", f"✅ Confidence: {confidence:.2f}%"
 
+# ===========================================
+# 🔄 PRELOAD ALL CROP DISEASE MODELS AT STARTUP
+# ===========================================
+print("🔄 Preloading disease detection models...")
 
+for c in CROP_MODELS.keys():
+    try:
+        load_model_and_labels(c)
+        print(f"✅ Loaded {c} model successfully")
+    except Exception as e:
+        print(f"❌ Failed to load {c} model: {e}")
 
 def recommend_treatment(crop, disease):
     """
