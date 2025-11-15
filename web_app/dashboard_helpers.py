@@ -223,12 +223,6 @@ CROP_MODELS = {
         "models/tomato_class_indices.json",
         "efficientnet",   # trained with eff_preprocess
         False
-    ),
-    "soybean": (
-        "models/updated_soybean_disease_efficientnetb3.h5",
-        "models/soybean_class_indices.json",
-        "rescale",
-        False
     )
 }
 
