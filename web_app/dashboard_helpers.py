@@ -224,7 +224,7 @@ loaded_interpreters = {}
 loaded_labels = {}
 
 # ============================================
-# LOAD TFLITE MODEL
+# LOAD TFLITE MODEL + LABELS
 # ============================================
 def load_model_and_labels(crop):
     if crop not in loaded_interpreters:
@@ -235,15 +235,26 @@ def load_model_and_labels(crop):
         interpreter.allocate_tensors()
         loaded_interpreters[crop] = interpreter
 
-        # Load labels
+        # Load labels (supports BOTH dict and list)
         with open(label_path, "r") as f:
             labels_dict = json.load(f)
-            sorted_labels = [None] * len(labels_dict)
-            for k, v in labels_dict.items():
-                sorted_labels[int(v)] = k
-            loaded_labels[crop] = sorted_labels
+
+            # Case 1: labels are already a list → use directly
+            if isinstance(labels_dict, list):
+                loaded_labels[crop] = labels_dict
+
+            # Case 2: labels are a dict → convert to list (sorted by index)
+            elif isinstance(labels_dict, dict):
+                sorted_labels = [None] * len(labels_dict)
+                for k, v in labels_dict.items():
+                    sorted_labels[int(v)] = k
+                loaded_labels[crop] = sorted_labels
+
+            else:
+                raise ValueError(f"❌ Unknown label format in {label_path}")
 
     return loaded_interpreters[crop], loaded_labels[crop]
+
 
 # ============================================
 # IMAGE PREPROCESS
