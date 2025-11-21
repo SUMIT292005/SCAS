@@ -126,10 +126,10 @@ function initializeAutoFillToggles() {
             const data = await response.json();
             
             setTimeout(() => {
-                if(data.temperature) {
+                if(data.temperature !== null && data.temperature !== undefined) {
                     animateValueChange(tempInput, data.temperature);
                 }
-                if(data.rainfall) {
+                if(data.rainfall !== null && data.rainfall !== undefined) {
                     animateValueChange(rainfallInput, data.rainfall);
                     setPerDayRainfall(data.rainfall);
                 }
